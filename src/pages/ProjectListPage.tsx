@@ -1,4 +1,5 @@
 import Header from "@components/sections/Header";
+import ProjectList from "@components/projectList/ProjectList";
 
 /**
  * 첫 프로젝트 리스트 화면입니다.
@@ -11,6 +12,7 @@ function ProjectListPage() {
         buttonLabel={"생성하기"}
         onClick={() => console.log("생성")}
       />
+      <ProjectList />
     </div>
   );
 }

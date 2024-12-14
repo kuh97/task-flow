@@ -6,7 +6,7 @@ interface HeaderProps {
 
 function Header({ title, buttonLabel, onClick }: HeaderProps) {
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between items-center">
       <h1 className="text-2xl font-bold">{title}</h1>
       {buttonLabel && (
         <button
