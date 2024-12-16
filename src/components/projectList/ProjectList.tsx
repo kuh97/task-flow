@@ -12,6 +12,7 @@ const testProjects: Project[] = [
     createdAt: "2024-11-03",
     progress: 0,
     members: [],
+    tasks: [],
   },
   {
     id: 2,
@@ -20,6 +21,8 @@ const testProjects: Project[] = [
     createdAt: "2024-10-12",
     progress: 50,
     members: [],
+    endDate: "2025-06-03",
+    tasks: [],
   },
   {
     id: 2,
@@ -28,6 +31,7 @@ const testProjects: Project[] = [
     createdAt: "2023-01-20",
     progress: 90,
     members: [],
+    tasks: [],
   },
 ];
 
