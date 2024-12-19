@@ -28,8 +28,13 @@
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
       "@pages/*": ["src/pages/*"],
-      "@models/*": ["src/models/*"]
-    }
+      "@models/*": ["src/models/*"],
+      "@assets/*": ["src/assets/*"],
+      "@store/*": ["src/store/*"]
+    },
+
+    /* Image */
+    "types": ["vite-plugin-svgr/client"]
   },
-  "include": ["src"]
+  "include": ["src", "svg.d.ts"]
 }
