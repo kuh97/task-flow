@@ -11,7 +11,7 @@ import { useState } from "react";
 import Project from "@models/Project";
 import { format } from "date-fns";
 
-function ProjectListPage() {
+const ProjectListPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({});
   const [errorMsg, setErrorMsg] = useState<ErrorMessage>({});
@@ -87,6 +87,6 @@ function ProjectListPage() {
       </Modal>
     </div>
   );
-}
+};
 
 export default ProjectListPage;

@@ -6,7 +6,7 @@ interface IconProps {
   alt?: string;
 }
 
-function Icon({ name, className, alt }: IconProps) {
+const Icon = ({ name, className, alt }: IconProps) => {
   const IconComponent = useMemo(
     () =>
       React.lazy(() =>
@@ -23,6 +23,6 @@ function Icon({ name, className, alt }: IconProps) {
       <IconComponent className={className} aria-label={alt} />
     </Suspense>
   );
-}
+};
 
 export default Icon;

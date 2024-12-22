@@ -4,11 +4,7 @@ interface TextFieldProps {
   errorMessage?: string;
 }
 
-const TextField: React.FC<TextFieldProps> = ({
-  value,
-  onChange,
-  errorMessage,
-}) => {
+const TextField = ({ value, onChange, errorMessage }: TextFieldProps) => {
   return (
     <div className="h-[65px]">
       <input

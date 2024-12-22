@@ -17,11 +17,11 @@ interface CreateProjectFormProps {
   setErrorMsg: React.Dispatch<React.SetStateAction<ErrorMessage>>;
 }
 
-function CreateProjectForm({
+const CreateProjectForm = ({
   setFormData,
   errorMessages,
   setErrorMsg,
-}: CreateProjectFormProps) {
+}: CreateProjectFormProps) => {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -78,6 +78,6 @@ function CreateProjectForm({
       </label>
     </form>
   );
-}
+};
 
 export default CreateProjectForm;

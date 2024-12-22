@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useProjectStore } from "@store/useProjectStore";
 
-function KanbanBoardPage() {
+const KanbanBoardPage = () => {
   const { id } = useParams<{ id: string }>();
   const projects = useProjectStore((state) => state.projects);
   const project = projects.find((p) => p.id === Number(id));
@@ -13,6 +13,6 @@ function KanbanBoardPage() {
   return (
     <div className="ml-[300px] p-10">{`<${project.name}> 칸반 보드 페이지`}</div>
   );
-}
+};
 
 export default KanbanBoardPage;

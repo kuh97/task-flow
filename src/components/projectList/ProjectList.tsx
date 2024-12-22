@@ -7,7 +7,7 @@ import MonthlyProjectBox from "@components/projectList/MonthlyProjectBox";
 /**
  * 프로젝트 리스트 컴포넌트입니다.
  */
-function ProjectList() {
+const ProjectList = () => {
   const projects = useProjectStore((state) => state.projects); // 최신순으로 sort되어 넘어온다고 가정
   const [groupedProjects, setGroupedProjects] = useState<
     Map<number, Map<number, Project[]>>
@@ -43,6 +43,6 @@ function ProjectList() {
       ))}
     </div>
   );
-}
+};
 
 export default ProjectList;

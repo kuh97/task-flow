@@ -9,7 +9,7 @@ interface CustomDatePickerProps {
   onChange: (date: Date | null) => void;
 }
 
-function CustomDatePicker({ value, onChange }: CustomDatePickerProps) {
+const CustomDatePicker = ({ value, onChange }: CustomDatePickerProps) => {
   return (
     <div className="w-full">
       <DatePicker
@@ -26,7 +26,7 @@ function CustomDatePicker({ value, onChange }: CustomDatePickerProps) {
       />
     </div>
   );
-}
+};
 
 const CustomInput = forwardRef((props: any, ref) => {
   return (
