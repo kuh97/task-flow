@@ -28,7 +28,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
       id: 1,
       name: "방가방가 프로젝트",
       description: "1번 입니당",
-      createdAt: "2024-11-03",
+      createdAt: "2024-12-03",
       progress: 0,
       members: [],
       tasks: [],

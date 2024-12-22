@@ -11,7 +11,7 @@ function Header({ title, buttonLabel, onClick }: HeaderProps) {
       {buttonLabel && (
         <button
           className={
-            "bg-primary text-white hover:bg-primary-hover font-medium py-2 px-4 rounded mr-2 transition duration-300"
+            "bg-primary text-white hover:bg-primary-hover cursor-pointer font-medium py-2 px-4 rounded mr-2 transition duration-200"
           }
           onClick={onClick}
         >
