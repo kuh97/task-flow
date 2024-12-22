@@ -10,7 +10,7 @@ import KanbanBoardPage from "@pages/KanbanBoardPage";
 import GanttChartPage from "@pages/GanttChartPage";
 import MembersPage from "@pages/MembersPage";
 
-function App() {
+const App = () => {
   return (
     <Router>
       <Routes>
@@ -27,6 +27,6 @@ function App() {
       </Routes>
     </Router>
   );
-}
+};
 
 export default App;

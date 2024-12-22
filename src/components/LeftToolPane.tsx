@@ -21,7 +21,7 @@ interface LeftToolPaneProps {
   project: Project;
 }
 
-function LeftToolPane({ project }: LeftToolPaneProps) {
+const LeftToolPane = ({ project }: LeftToolPaneProps) => {
   const navigate = useNavigate();
   const [selectedTool, setSelectedTool] = useState<number | null>(2);
 
@@ -82,6 +82,6 @@ function LeftToolPane({ project }: LeftToolPaneProps) {
       </div>
     </div>
   );
-}
+};
 
 export default LeftToolPane;

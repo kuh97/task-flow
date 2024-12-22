@@ -5,12 +5,12 @@ interface CircularProgressProps {
   className?: string;
 }
 
-const CircularProgress: React.FC<CircularProgressProps> = ({
+const CircularProgress = ({
   progress,
   className,
   size = 100,
   strokeWidth = 10,
-}) => {
+}: CircularProgressProps) => {
   // 원의 반지름
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;

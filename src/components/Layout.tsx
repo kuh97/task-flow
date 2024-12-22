@@ -2,7 +2,7 @@ import { Outlet, useParams } from "react-router-dom";
 import LeftToolPane from "@components/LeftToolPane";
 import { useProjectStore } from "@store/useProjectStore";
 
-function Layout() {
+const Layout = () => {
   const { id } = useParams<{ id: string }>();
   const projects = useProjectStore((state) => state.projects);
   const project = id ? projects.find((p) => p.id === Number(id)) : null;
@@ -15,6 +15,6 @@ function Layout() {
       </div>
     </div>
   );
-}
+};
 
 export default Layout;

@@ -4,7 +4,7 @@ interface HeaderProps {
   onClick?: () => void;
 }
 
-function Header({ title, buttonLabel, onClick }: HeaderProps) {
+const Header = ({ title, buttonLabel, onClick }: HeaderProps) => {
   return (
     <div className="flex justify-between items-center">
       <h1 className="text-2xl font-bold">{title}</h1>
@@ -20,6 +20,6 @@ function Header({ title, buttonLabel, onClick }: HeaderProps) {
       )}
     </div>
   );
-}
+};
 
 export default Header;

@@ -9,14 +9,14 @@ interface ModalProps {
   onClick: () => void;
 }
 
-function Modal({
+const Modal = ({
   title,
   isOpen,
   onClose,
   buttonLabel,
   onClick,
   children,
-}: PropsWithChildren<ModalProps>) {
+}: PropsWithChildren<ModalProps>) => {
   return isOpen ? (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
       <div className="flex flex-col bg-white p-6 rounded-lg min-w-fit">
@@ -36,6 +36,6 @@ function Modal({
       </div>
     </div>
   ) : null;
-}
+};
 
 export default Modal;
