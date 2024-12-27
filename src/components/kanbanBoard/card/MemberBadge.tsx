@@ -1,3 +1,4 @@
+import React from "react";
 import Member from "@models/Member";
 
 const colors = [
@@ -43,4 +44,4 @@ const MemberBadge = ({ members }: MemeberBadgeProps) => {
   );
 };
 
-export default MemberBadge;
+export default React.memo(MemberBadge);
