@@ -8,3 +8,29 @@
 body {
   @apply font-sans;
 }
+
+@layer utilities {
+  /* 전체 스크롤바 */
+  ::-webkit-scrollbar {
+    width: 7px; /* 스크롤바 너비 */
+    height: 7px; /* 수평 스크롤바 높이 */
+  }
+
+  /* 스크롤바 트랙 */
+  ::-webkit-scrollbar-track {
+    background-color: #f1f1f1; /* 연한 회색 트랙 */
+    border-radius: 10px; /* 트랙 모서리 둥글게 */
+  }
+
+  /* 스크롤바 핸들 */
+  ::-webkit-scrollbar-thumb {
+    background-color: #d3d3d3; /* 연한 회색 핸들 */
+    border-radius: 10px; /* 핸들 모서리 둥글게 */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+  }
+
+  /* 핸들 호버 시 */
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #b0b0b0; /* 호버 시 조금 더 짙은 회색 */
+  }
+}

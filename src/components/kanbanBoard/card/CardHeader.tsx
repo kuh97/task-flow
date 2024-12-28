@@ -1,3 +1,4 @@
+import React from "react";
 import Member from "@/models/Member";
 import MemberBadge from "@components/kanbanBoard/card/MemberBadge";
 
@@ -15,4 +16,4 @@ const CardHeader = ({ name, managers }: CardHeaderProps) => {
   );
 };
 
-export default CardHeader;
+export default React.memo(CardHeader);

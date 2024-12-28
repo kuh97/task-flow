@@ -10,7 +10,7 @@ const Layout = () => {
   return (
     <div className="relative">
       {project && <LeftToolPane project={project} />}
-      <div className={project ? "ml-[5px]" : ""}>
+      <div className={`h-screen ${project ? "ml-[5px]" : ""}`}>
         <Outlet />
       </div>
     </div>

@@ -32,7 +32,7 @@ const ProjectList = () => {
   }, [projects]);
 
   return (
-    <div className="box-border mt-10">
+    <div className="box-border mt-6">
       {Array.from(groupedProjects.entries()).map(([year, months]) => (
         <div key={year} className="mb-5">
           <h2 className="text-xl font-semibold h-[40px] flex items-center">{`${year}년`}</h2>
