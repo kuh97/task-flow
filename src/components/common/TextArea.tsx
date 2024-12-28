@@ -1,4 +1,4 @@
-interface TextFieldProps {
+interface TextAreaProps {
   value: string;
   onChange: (value: string) => void;
   errorMessage?: string;
@@ -6,21 +6,21 @@ interface TextFieldProps {
   className?: string;
 }
 
-const TextField = ({
+const TextArea = ({
   value,
   onChange,
   errorMessage,
   placeholder = "",
   className = "",
-}: TextFieldProps) => {
+}: TextAreaProps) => {
   return (
     <>
-      <input
-        className={`w-full h-10 p-2 mt-2 text-sm font-normal text-gray-900 
-          border-[1.5px] ${errorMessage ? "border-red-400" : "border-gray-300"} rounded-md 
-          hover:border-gray-400 focus:outline-none focus:border-indigo-600  
-          ${className}`}
-        type="text"
+      <textarea
+        className={`w-full p-2 mt-2 text-sm font-normal text-gray-900 
+            border-[1.5px] ${errorMessage ? "border-red-400" : "border-gray-300"} rounded-md 
+            hover:border-gray-400 focus:outline-none focus:border-indigo-600 
+            resize-none align-top 
+            ${className}`}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
@@ -32,4 +32,4 @@ const TextField = ({
   );
 };
 
-export default TextField;
+export default TextArea;

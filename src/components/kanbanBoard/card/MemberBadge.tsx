@@ -22,6 +22,8 @@ interface MemeberBadgeProps {
 }
 
 const MemberBadge = ({ members }: MemeberBadgeProps) => {
+  if (!members || members.length === 0) return null;
+
   const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
   return (

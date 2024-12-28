@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CustomDatePicker from "@components/common/CustomDataPicker";
+import CustomSingleDatePicker from "@/components/common/CustomSingleDatePicker";
 import TextField from "../common/TextField";
 import { format } from "date-fns";
 
@@ -45,38 +45,52 @@ const CreateProjectForm = ({
   };
 
   const handleChangeDate = (date: Date | null) => {
+    setEndDate(date);
     if (date) {
-      setEndDate(date);
       setFormData((prev) => ({
         ...prev,
         ["endDate"]: format(date, "yyyy-MM-dd"),
+      }));
+    } else {
+      // date가 null일 때 FormData에서도 초기화
+      setFormData((prev) => ({
+        ...prev,
+        ["endDate"]: "",
       }));
     }
   };
 
   return (
-    <form className="flex flex-col w-[350px] h-auto">
-      <label className="font-medium text-gray-900 mt-10">
-        프로젝트 이름<span className="pl-1 text-red-600">*</span>
-        <TextField
-          value={name}
-          onChange={handleChangeName}
-          errorMessage={errorMessages["name"]}
-        />
-      </label>
-      <label className="font-medium text-gray-900 mt-5">
-        프로젝트 설명<span className="pl-1 text-red-600">*</span>
-        <TextField
-          value={description}
-          onChange={handleChangeDescription}
-          errorMessage={errorMessages["description"]}
-        />
-      </label>
-      <label className="font-medium text-gray-900 mt-5">
-        마감일
-        <CustomDatePicker value={endDate} onChange={handleChangeDate} />
-      </label>
-    </form>
+    <div className="flex flex-col w-[350px] pt-4">
+      <div className="grid grid-rows-3 gap-8">
+        <div>
+          <label className="font-medium text-gray-900 mt-10">
+            프로젝트 이름<span className="pl-1 text-red-600">*</span>
+          </label>
+          <TextField
+            value={name}
+            onChange={handleChangeName}
+            errorMessage={errorMessages["name"]}
+            placeholder="이름을 입력하세요"
+          />
+        </div>
+        <div>
+          <label className="font-medium text-gray-900 mt-7">
+            프로젝트 설명<span className="pl-1 text-red-600">*</span>
+          </label>
+          <TextField
+            value={description}
+            onChange={handleChangeDescription}
+            errorMessage={errorMessages["description"]}
+            placeholder="설명을 입력하세요"
+          />
+        </div>
+        <div>
+          <label className="font-medium text-gray-900 mt-7">마감일</label>
+          <CustomSingleDatePicker value={endDate} onChange={handleChangeDate} />
+        </div>
+      </div>
+    </div>
   );
 };
 

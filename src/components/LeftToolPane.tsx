@@ -44,7 +44,7 @@ const LeftToolPane = ({ project }: LeftToolPaneProps) => {
   };
 
   return (
-    <div className="fixed left-0 top-0 w-[300px] h-screen bg-white border-r">
+    <div className="fixed left-0 top-0 w-64 h-screen bg-white border-r">
       <div className="p-6">
         <div className="mb-6">
           <h1 className="text-2xl font-bold">{project.name}</h1>
@@ -65,7 +65,7 @@ const LeftToolPane = ({ project }: LeftToolPaneProps) => {
                 <Icon
                   name={menu.imageName}
                   alt={`${menu.imageName}_${menu.id}`}
-                  className={`${menu.id === 1 ? "w-8 h-8" : "w-7 h-7 mr-3"} 
+                  className={`${menu.id === 1 ? "w-8 h-8" : "w-6 h-6 mr-3"} 
                     ${menu.id === selectedTool ? "text-blue-500" : "text-gray-700"}`}
                 />
                 {menu.showName && (
