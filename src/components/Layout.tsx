@@ -9,7 +9,11 @@ const Layout = () => {
 
   return (
     <div className="relative">
-      {project && <LeftToolPane project={project} />}
+      {project && (
+        <div className="w-64 border-r border-gray-200 bg-gray-50">
+          <LeftToolPane project={project} />
+        </div>
+      )}
       <div className={`h-screen ${project ? "ml-[5px]" : ""}`}>
         <Outlet />
       </div>

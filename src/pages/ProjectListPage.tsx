@@ -16,9 +16,14 @@ const ProjectListPage = () => {
   const [formData, setFormData] = useState<FormData>({});
   const [errorMsg, setErrorMsg] = useState<ErrorMessage>({});
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const handleCloseModal = () => setIsModalOpen(false);
 
   const addProject = useProjectStore((state) => state.addProject);
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setFormData({});
+    setErrorMsg({});
+  };
 
   const validationCheck = () => {
     const { name, description } = formData;
@@ -26,14 +31,14 @@ const ProjectListPage = () => {
     if (!name || name.trim() === "") {
       setErrorMsg((prev) => ({
         ...prev,
-        ["name"]: "프로젝트 이름을 입력해주세요.",
+        ["name"]: "프로젝트 이름을 입력해주세요",
       }));
       hasError = true;
     }
     if (!description || description.trim() === "") {
       setErrorMsg((prev) => ({
         ...prev,
-        ["description"]: "프로젝트 설명을 입력해주세요.",
+        ["description"]: "프로젝트 설명을 입력해주세요",
       }));
       hasError = true;
     }
@@ -58,7 +63,7 @@ const ProjectListPage = () => {
       // store에 프로젝트 추가
       addProject(newProject);
 
-      setIsModalOpen(false);
+      handleCloseModal();
       // 새로 생성된 프로젝트의 칸반보드로 이동
       navigate(`/project/${newProject.id}/kanban`);
     }
@@ -71,6 +76,7 @@ const ProjectListPage = () => {
         buttonLabel={"프로젝트 생성"}
         onClick={() => setIsModalOpen(true)}
       />
+      <hr className="mt-4 border-t-2" />
       <ProjectList />
       <Modal
         title={"프로젝트 생성"}

@@ -2,6 +2,7 @@ import { create } from "zustand";
 import Project from "@models/Project";
 import Task from "@models/Task";
 import Member from "@models/Member";
+import { mockProjectDatas } from "@/mockProjectDatas";
 
 interface ProjectStore {
   projects: Project[];
@@ -23,112 +24,7 @@ interface ProjectStore {
 }
 
 export const useProjectStore = create<ProjectStore>((set, get) => ({
-  projects: [
-    {
-      id: 1,
-      name: "방가방가 프로젝트",
-      description: "1번 입니당",
-      createdAt: "2024-12-03",
-      progress: 0,
-      members: [],
-      tasks: [
-        {
-          id: 1,
-          projectId: 1,
-          name: "로그인 기능",
-          description: "소셜 로그인 기능입니다. 블라블라블라",
-          status: "InProgress",
-          managers: [
-            {
-              id: 1,
-              email: "taeyeon@gmail.com",
-              nickname: "ty",
-              isActive: true,
-            },
-            {
-              id: 2,
-              email: "meenseek@gmail.com",
-              nickname: "ms",
-              isActive: true,
-            },
-          ],
-          startDate: "2024-11-29",
-          endDate: "2024-12-29",
-          progress: 70,
-          subTasks: [],
-        },
-        {
-          id: 2,
-          projectId: 1,
-          name: "게시판 기능",
-          description: "게시판 기능입니다. 블라블라블라",
-          status: "ToDo",
-          managers: [
-            {
-              id: 3,
-              email: "uiuiui@gmail.com",
-              nickname: "ui",
-              isActive: true,
-            },
-            {
-              id: 2,
-              email: "meenseek@gmail.com",
-              nickname: "ms",
-              isActive: true,
-            },
-          ],
-          startDate: "2024-12-29",
-          endDate: "2025-02-15",
-          progress: 0,
-          subTasks: [],
-        },
-        {
-          id: 3,
-          projectId: 1,
-          name: "계정 관리",
-          description: "계정 관리 기능입니다. 블라블라블라블라블라블라블라블라",
-          status: "ToDo",
-          managers: [
-            {
-              id: 2,
-              email: "meenseek@gmail.com",
-              nickname: "ms",
-              isActive: true,
-            },
-            {
-              id: 3,
-              email: "uiuiui@gmail.com",
-              nickname: "ui",
-              isActive: true,
-            },
-          ],
-          startDate: "2025-01-12",
-          endDate: "2025-03-01",
-          progress: 0,
-          subTasks: [],
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "하이루 프로젝트",
-      description: "2번 입니당",
-      createdAt: "2024-10-12",
-      progress: 50,
-      members: [],
-      endDate: "2025-06-03",
-      tasks: [],
-    },
-    {
-      id: 3,
-      name: "머선 프로젝트",
-      description: "3번 입니당",
-      createdAt: "2023-01-20",
-      progress: 90,
-      members: [],
-      tasks: [],
-    },
-  ],
+  projects: mockProjectDatas,
 
   addProject: (project) =>
     set((state) => ({
