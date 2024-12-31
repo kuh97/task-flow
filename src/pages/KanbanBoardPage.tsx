@@ -14,7 +14,7 @@ import Task from "@/models/Task";
 
 const KanbanBoardPage = () => {
   const { id } = useParams<{ id: string }>();
-  const { projects } = useProjectStore();
+  const { projects, addTask } = useProjectStore();
   const project = projects.find((p) => p.id === Number(id));
 
   const initialFormData = {
@@ -28,8 +28,6 @@ const KanbanBoardPage = () => {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [errorMsg, setErrorMsg] = useState<ErrorMessage>({});
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
-  const addTask = useProjectStore((state) => state.addTask);
 
   if (!project) {
     return <div>프로젝트를 찾을 수 없습니다.</div>;
@@ -104,6 +102,13 @@ const KanbanBoardPage = () => {
         buttonLabel="작업 추가"
         onClick={() => setIsModalOpen(true)}
       />
+      <TaskCardDragProvider>
+        <div className="flex border-box space-x-4 mt-6 h-screen overflow-hidden">
+          {statusNames.map((status) => (
+            <Board key={status} taskType={status} project={project} />
+          ))}
+        </div>
+      </TaskCardDragProvider>
       <Modal
         title={"작업 추가"}
         isOpen={isModalOpen}
@@ -118,13 +123,6 @@ const KanbanBoardPage = () => {
           members={project.members}
         />
       </Modal>
-      <TaskCardDragProvider>
-        <div className="flex h-full border-box space-x-4 overflow-y-auto mt-6">
-          {statusNames.map((status) => (
-            <Board key={status} taskType={status} project={project} />
-          ))}
-        </div>
-      </TaskCardDragProvider>
     </div>
   );
 };

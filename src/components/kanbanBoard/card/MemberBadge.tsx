@@ -22,21 +22,21 @@ interface MemeberBadgeProps {
 }
 
 const MemberBadge = ({ members }: MemeberBadgeProps) => {
-  if (!members || members.length === 0) return null;
-
   const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
   return (
-    <div className="flex">
-      <div
-        className={`flex w-[37px] h-[37px] border-box p-4 justify-center items-center rounded-full text-white/75 font-bold border border-white z-20`}
-        style={{ backgroundColor: randomColor[0] }}
-      >
-        {members[0].nickname.slice(0, 2).toUpperCase()}
-      </div>
+    <div className="flex h-[37px]">
+      {members.length > 0 && (
+        <div
+          className={`flex w-[37px] border-box p-4 justify-center items-center rounded-full text-white/75 font-bold border border-white z-20`}
+          style={{ backgroundColor: randomColor[0] }}
+        >
+          {members[0].nickname.slice(0, 2).toUpperCase()}
+        </div>
+      )}
       {members.length > 1 && (
         <div
-          className={`flex w-[37px] h-[37px] border-box p-4 justify-center items-center rounded-full text-white border border-white text-xs ml-[-12px] z-10`}
+          className={`flex w-[37px] border-box p-4 justify-center items-center rounded-full text-white border border-white text-xs ml-[-12px] z-10`}
           style={{ backgroundColor: randomColor[1] }}
         >
           {`+${members.length - 1}`}
