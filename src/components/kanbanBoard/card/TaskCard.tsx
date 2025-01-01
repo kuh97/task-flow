@@ -33,18 +33,24 @@ const TaskCard = ({ task }: TaskCardProps) => {
 
   return (
     <div
-      className={`w-[280px] h-[180px] border border-gray-200 rounded-xl bg-white p-3 cursor-pointer hover:scale-[1.03] hover:shadow-[0_2px_6px_rgba(0,0,0,0.1)] transition-transform duration-150 ease-in-out
-                `}
+      className={`w-[280px] h-[160px] border border-gray-200 rounded-xl bg-white p-3 cursor-pointer
+                  hover:scale-[1.03] hover:shadow-[0_2px_6px_rgba(0,0,0,0.1)] transition-transform duration-150 ease-in-out`}
       onClick={handleClickCard}
       draggable
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
       <CardHeader name={task.name} managers={task.managers} />
-      <div className="flex-col h-[80px]">
-        <p className="text-sm text-gray-500 font-light">{task.description}</p>
+      <div className="flex-col h-[60px]">
+        <p className="text-sm text-gray-500 font-light line-clamp-2">
+          {task.description}
+        </p>
       </div>
-      <CardFooter startDate={task.startDate} endDate={task.endDate} />
+      <CardFooter
+        startDate={task.startDate}
+        endDate={task.endDate}
+        subTasks={task.subTasks}
+      />
     </div>
   );
 };

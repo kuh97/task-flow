@@ -57,7 +57,7 @@ const BoardContent = ({ type, tasks, handleUpdateTask }: BoardContentProps) => {
 
   return (
     <div
-      className={`flex flex-col h-full p-2 box-border items-center space-y-2
+      className={`flex flex-col h-full p-2 box-border items-center space-y-2 overflow-y-auto overflow-x-hidden
                 ${dragEntered ? "outline outline-2 outline-dashed outline-indigo-500/50 outline-offset-[-2px] transition-shadow duration-100 ease-in-out shadow-[inset_0_0_7px_rgba(79,70,229,0.3)]" : ""}`}
       onDragEnter={handleDragEnter}
       onDragOver={handleDragOver}

@@ -10,7 +10,7 @@ interface CardHeaderProps {
 const CardHeader = ({ name, managers }: CardHeaderProps) => {
   return (
     <div className="flex justify-between items-center mb-2">
-      <span className="text-[0.9rem] font-semibold">{name}</span>
+      <span className="text-[0.9rem] font-semibold line-clamp-1">{name}</span>
       <MemberBadge members={managers} />
     </div>
   );

@@ -111,7 +111,46 @@ export const mockProjectDatas: Project[] = [
         startDate: "2024-11-29",
         endDate: "2024-12-29",
         progress: 70,
-        subTasks: [],
+        subTasks: [
+          {
+            id: 4,
+            projectId: 1,
+            name: "로그인 서브작업1",
+            description: "카카오 로그인",
+            status: "Done",
+            managers: [
+              {
+                id: 1,
+                email: "taeyeon@gmail.com",
+                nickname: "ty",
+                isActive: true,
+              },
+            ],
+            startDate: "2024-11-29",
+            endDate: "2024-12-29",
+            progress: 100,
+            subTasks: [],
+          },
+          {
+            id: 5,
+            projectId: 1,
+            name: "로그인 서브작업2",
+            description: "네이버 로그인",
+            status: "InProgress",
+            managers: [
+              {
+                id: 2,
+                email: "meenseek@gmail.com",
+                nickname: "ms",
+                isActive: true,
+              },
+            ],
+            startDate: "2024-11-29",
+            endDate: "2024-12-29",
+            progress: 30,
+            subTasks: [],
+          },
+        ],
       },
       {
         id: 2,
