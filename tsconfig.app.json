@@ -30,7 +30,9 @@
       "@pages/*": ["src/pages/*"],
       "@models/*": ["src/models/*"],
       "@assets/*": ["src/assets/*"],
-      "@store/*": ["src/store/*"]
+      "@store/*": ["src/store/*"],
+      "@queries/*": ["src/queries/*"],
+      "@api/*": ["src/api/*"]
     },
 
     /* Image */

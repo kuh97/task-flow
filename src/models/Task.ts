@@ -5,8 +5,8 @@ export const statusNames = ["ToDo", "InProgress", "Done"] as const;
 export type Status = (typeof statusNames)[number];
 
 export default interface Task {
-  id: number;
-  projectId: number;
+  id: string;
+  projectId: string;
   name: string;
   description: string;
   status: Status; // 상태

@@ -1,5 +1,5 @@
 export default interface Member {
-  id: number;
+  id: string;
   email: string;
   nickname: string;
   isActive: boolean;

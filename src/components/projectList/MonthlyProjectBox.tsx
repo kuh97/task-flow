@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
+import { ProjectBasic } from "@models/Project";
 import CircularProgress from "@components/projectList/CircularProgress";
-import Project from "@models/Project";
 
 interface MonthlyProjectBoxProps {
   month: number;
-  projects: Project[];
+  projects: ProjectBasic[];
 }
 
 const MonthlyProjectBox = ({ month, projects }: MonthlyProjectBoxProps) => {

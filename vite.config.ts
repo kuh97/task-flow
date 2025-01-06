@@ -13,6 +13,8 @@ export default defineConfig({
       "@models": path.resolve(__dirname, "./src/models"),
       "@assets": path.resolve(__dirname, "./src/assets"),
       "@store": path.resolve(__dirname, "./src/store"),
+      "@queries": path.resolve(__dirname, "./src/queries"),
+      "@api": path.resolve(__dirname, "./src/api"),
     },
   },
 });
