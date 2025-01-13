@@ -6,7 +6,7 @@ import TaskCard from "@components/kanbanBoard/card/TaskCard";
 interface BoardContentProps {
   type: Status;
   tasks: Task[];
-  handleUpdateTask: (targetTaskId: number, newStatus: Status) => void;
+  handleUpdateTask: (targetTaskId: string, newStatus: Status) => void;
 }
 
 const BoardContent = ({ type, tasks, handleUpdateTask }: BoardContentProps) => {
@@ -16,7 +16,7 @@ const BoardContent = ({ type, tasks, handleUpdateTask }: BoardContentProps) => {
   const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (
-      draggedTaskId > -1 &&
+      draggedTaskId !== "" &&
       !tasks.some((task) => task.id === draggedTaskId)
     ) {
       setDragEntered(true);
@@ -28,7 +28,10 @@ const BoardContent = ({ type, tasks, handleUpdateTask }: BoardContentProps) => {
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    if (draggedTaskId > -1 && tasks.some((task) => task.id === draggedTaskId)) {
+    if (
+      draggedTaskId !== "" &&
+      tasks.some((task) => task.id === draggedTaskId)
+    ) {
       e.dataTransfer.dropEffect = "none";
     }
   };
@@ -46,7 +49,7 @@ const BoardContent = ({ type, tasks, handleUpdateTask }: BoardContentProps) => {
 
   const handleDrop = () => {
     if (
-      draggedTaskId > -1 &&
+      draggedTaskId !== "" &&
       !tasks.some((task) => task.id === draggedTaskId)
     ) {
       // 다른 상태의 Board로 옮겼을 때만 update

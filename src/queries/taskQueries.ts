@@ -118,6 +118,28 @@ export const UPDATE_TASK_MUTATION = gql`
   }
 `;
 
+export const UPDATE_TASK_STATUS = gql`
+  mutation UpdateTask($id: ID!, $status: String) {
+    updateTask(id: $id, status: $status) {
+      id
+      name
+      description
+      status
+      priority
+      progress
+      projectId
+      managers {
+        id
+        nickname
+      }
+      subTasks {
+        id
+        name
+      }
+    }
+  }
+`;
+
 export const DELETE_TASK_MUTATION = gql`
   mutation DeleteTask($id: ID!) {
     deleteTask(id: $id) {
