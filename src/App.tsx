@@ -1,3 +1,5 @@
+import { QueryClientProvider } from "@tanstack/react-query";
+import queryClient from "./queryClient";
 import {
   BrowserRouter as Router,
   Routes,
@@ -12,20 +14,22 @@ import MembersPage from "@pages/MembersPage";
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route element={<Layout />}>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <Routes>
           <Route index element={<ProjectListPage />} />
-          <Route
-            path="/project/:id"
-            element={<Navigate to="kanban" replace />}
-          />
-          <Route path="/project/:id/kanban" element={<KanbanBoardPage />} />
-          <Route path="/project/:id/gantt" element={<GanttChartPage />} />
-          <Route path="/project/:id/members" element={<MembersPage />} />
-        </Route>
-      </Routes>
-    </Router>
+          <Route element={<Layout />}>
+            <Route
+              path="/project/:id"
+              element={<Navigate to="kanban" replace />}
+            />
+            <Route path="/project/:id/kanban" element={<KanbanBoardPage />} />
+            <Route path="/project/:id/gantt" element={<GanttChartPage />} />
+            <Route path="/project/:id/members" element={<MembersPage />} />
+          </Route>
+        </Routes>
+      </Router>
+    </QueryClientProvider>
   );
 };
 

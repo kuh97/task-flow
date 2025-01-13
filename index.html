@@ -3,11 +3,62 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
+      style="font-display: swap"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Task Flow</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      /* 로딩 화면 스타일 */
+      #loading-screen {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f0f0;
+        font-family: "Pretendard", "sans-serif";
+      }
+      /* 모래시계 애니메이션 */
+      .loading {
+        font-size: 25px;
+        animation: swing 1s ease-in-out infinite;
+      }
+
+      /* 왼쪽, 오른쪽으로 기울어지는 애니메이션 */
+      @keyframes swing {
+        0% {
+          transform: rotate(0deg);
+        }
+        50% {
+          transform: rotate(-45deg); /* 왼쪽 45도 */
+        }
+        100% {
+          transform: rotate(0deg); /* 원래 상태로 */
+        }
+      }
+    </style>
   </head>
   <body>
+    <div id="loading-screen">
+      <div>여러분의 작업 공간이 준비되고 있어요!&nbsp;</div>
+      <div class="loading">🧹</div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // React가 로드된 후 로딩 화면 제거
+      window.onload = () => {
+        const loadingScreen = document.getElementById("loading-screen");
+        if (loadingScreen) {
+          loadingScreen.style.display = "none";
+        }
+      };
+    </script>
   </body>
 </html>

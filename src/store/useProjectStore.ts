@@ -2,29 +2,31 @@ import { create } from "zustand";
 import Project from "@models/Project";
 import Task from "@models/Task";
 import Member from "@models/Member";
-import { mockProjectDatas } from "@/mockProjectDatas";
 
 interface ProjectStore {
   projects: Project[];
   // 기본 CRUD 작업
+  setProjects: (projects: Project[]) => void;
   addProject: (project: Project) => void;
-  updateProject: (id: number, project: Partial<Project>) => void;
-  deleteProject: (id: number) => void;
-  getProject: (id: number) => Project | undefined;
+  updateProject: (id: string, project: Partial<Project>) => void;
+  deleteProject: (id: string) => void;
+  getProject: (id: string) => Project | undefined;
 
   // 프로젝트 관련 작업
-  updateProgress: (id: number, progress: number) => void;
-  addMember: (projectId: number, member: Member) => void;
-  removeMember: (projectId: number, memberId: number) => void;
+  updateProgress: (id: string, progress: number) => void;
+  addMember: (projectId: string, member: Member) => void;
+  removeMember: (projectId: string, memberId: string) => void;
 
   // 작업(Task) 관련
-  addTask: (projectId: number, task: Task) => void;
-  updateTask: (projectId: number, taskId: number, task: Partial<Task>) => void;
-  deleteTask: (projectId: number, taskId: number) => void;
+  addTask: (projectId: string, task: Task) => void;
+  updateTask: (projectId: string, taskId: string, task: Partial<Task>) => void;
+  deleteTask: (projectId: string, taskId: string) => void;
 }
 
 export const useProjectStore = create<ProjectStore>((set, get) => ({
-  projects: mockProjectDatas,
+  projects: [],
+
+  setProjects: (projects) => set({ projects }),
 
   addProject: (project) =>
     set((state) => ({

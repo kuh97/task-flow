@@ -1,22 +1,19 @@
-import { useParams } from "react-router-dom";
+import { useState } from "react";
+import { useOutletContext } from "react-router-dom";
 import { useProjectStore } from "@store/useProjectStore";
-import { Status, statusNames } from "@/models/Task";
+import Task, { Status, statusNames } from "@models/Task";
+import { OutletContext } from "@components/Layout";
 import Board from "@components/kanbanBoard/Board";
 import TaskCardDragProvider from "@/context/TaskCardDragContext";
-import Header from "@/components/sections/Header";
-import Modal from "@/components/common/Modal";
-import { useState } from "react";
+import Header from "@components/Header";
+import Modal from "@components/common/Modal";
 import CreateTaskForm, {
   ErrorMessage,
   FormData,
-} from "@/components/kanbanBoard/CreateTaskForm";
-import Task from "@/models/Task";
+} from "@components/kanbanBoard/CreateTaskForm";
 
 const KanbanBoardPage = () => {
-  const { id } = useParams<{ id: string }>();
-  const { projects, addTask } = useProjectStore();
-  const project = projects.find((p) => p.id === Number(id));
-
+  const { project } = useOutletContext<OutletContext>();
   const initialFormData = {
     name: "",
     description: "",
@@ -28,10 +25,6 @@ const KanbanBoardPage = () => {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [errorMsg, setErrorMsg] = useState<ErrorMessage>({});
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
-  if (!project) {
-    return <div>프로젝트를 찾을 수 없습니다.</div>;
-  }
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -77,7 +70,7 @@ const KanbanBoardPage = () => {
   const handleCreateTask = () => {
     if (validationCheck()) {
       const newTask: Task = {
-        id: Date.now(),
+        id: "",
         projectId: project.id,
         name: formData.name,
         description: formData.description ?? "",
@@ -90,7 +83,7 @@ const KanbanBoardPage = () => {
         priority: false,
       };
 
-      addTask(project.id, newTask);
+      // addTask(data.getProjectById.id, newTask);
       handleCloseModal();
     }
   };

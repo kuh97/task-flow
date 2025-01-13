@@ -2,86 +2,86 @@ import Project from "./models/Project";
 
 export const mockProjectDatas: Project[] = [
   {
-    id: 1,
+    id: "1",
     name: "방가방가 프로젝트",
     description: "1번 입니당",
     createdAt: "2024-12-03",
     progress: 0,
     members: [
       {
-        id: 1,
+        id: "1",
         email: "uihyeon@naver.com",
         nickname: "김의현",
         isActive: true,
       },
       {
-        id: 2,
+        id: "2",
         email: "meenseek@naver.com",
         nickname: "김민식",
         isActive: true,
       },
       {
-        id: 3,
+        id: "3",
         email: "taeyeon@naver.com",
         nickname: "안태연",
         isActive: false,
       },
       {
-        id: 4,
+        id: "4",
         email: "minjae@naver.com",
         nickname: "박민재",
         isActive: true,
       },
       {
-        id: 5,
+        id: "5",
         email: "jihoon@gmail.com",
         nickname: "이지훈",
         isActive: true,
       },
       {
-        id: 6,
+        id: "6",
         email: "seoyeon@gmail.com",
         nickname: "김서연",
         isActive: true,
       },
       {
-        id: 7,
+        id: "7",
         email: "junwoo@naver.com",
         nickname: "최준우",
         isActive: false,
       },
       {
-        id: 8,
+        id: "8",
         email: "hyerim@gmail.com",
         nickname: "장혜림",
         isActive: true,
       },
       {
-        id: 9,
+        id: "9",
         email: "dongwook@naver.com",
         nickname: "강동욱",
         isActive: true,
       },
       {
-        id: 10,
+        id: "10",
         email: "yeji@gmail.com",
         nickname: "황예지",
         isActive: true,
       },
       {
-        id: 11,
+        id: "11",
         email: "minho@naver.com",
         nickname: "송민호",
         isActive: false,
       },
       {
-        id: 12,
+        id: "12",
         email: "soobin@gmail.com",
         nickname: "최수빈",
         isActive: true,
       },
       {
-        id: 13,
+        id: "13",
         email: "jaehyun@naver.com",
         nickname: "김재현",
         isActive: true,
@@ -89,20 +89,20 @@ export const mockProjectDatas: Project[] = [
     ],
     tasks: [
       {
-        id: 1,
-        projectId: 1,
+        id: "1",
+        projectId: "1",
         name: "로그인 기능",
         description: "소셜 로그인 기능입니다. 블라블라블라",
         status: "InProgress",
         managers: [
           {
-            id: 1,
+            id: "1",
             email: "taeyeon@gmail.com",
             nickname: "ty",
             isActive: true,
           },
           {
-            id: 2,
+            id: "2",
             email: "meenseek@gmail.com",
             nickname: "ms",
             isActive: true,
@@ -113,14 +113,14 @@ export const mockProjectDatas: Project[] = [
         progress: 70,
         subTasks: [
           {
-            id: 4,
-            projectId: 1,
+            id: "4",
+            projectId: "1",
             name: "로그인 서브작업1",
             description: "카카오 로그인",
             status: "Done",
             managers: [
               {
-                id: 1,
+                id: "1",
                 email: "taeyeon@gmail.com",
                 nickname: "ty",
                 isActive: true,
@@ -132,14 +132,14 @@ export const mockProjectDatas: Project[] = [
             subTasks: [],
           },
           {
-            id: 5,
-            projectId: 1,
+            id: "5",
+            projectId: "1",
             name: "로그인 서브작업2",
             description: "네이버 로그인",
             status: "InProgress",
             managers: [
               {
-                id: 2,
+                id: "2",
                 email: "meenseek@gmail.com",
                 nickname: "ms",
                 isActive: true,
@@ -153,20 +153,20 @@ export const mockProjectDatas: Project[] = [
         ],
       },
       {
-        id: 2,
-        projectId: 1,
+        id: "2",
+        projectId: "1",
         name: "게시판 기능",
         description: "게시판 기능입니다. 블라블라블라",
         status: "ToDo",
         managers: [
           {
-            id: 3,
+            id: "3",
             email: "uiuiui@gmail.com",
             nickname: "ui",
             isActive: true,
           },
           {
-            id: 2,
+            id: "2",
             email: "meenseek@gmail.com",
             nickname: "ms",
             isActive: true,
@@ -178,20 +178,20 @@ export const mockProjectDatas: Project[] = [
         subTasks: [],
       },
       {
-        id: 3,
-        projectId: 1,
+        id: "3",
+        projectId: "1",
         name: "계정 관리",
         description: "계정 관리 기능입니다. 블라블라블라블라블라블라블라블라",
         status: "ToDo",
         managers: [
           {
-            id: 2,
+            id: "2",
             email: "meenseek@gmail.com",
             nickname: "ms",
             isActive: true,
           },
           {
-            id: 3,
+            id: "3",
             email: "uiuiui@gmail.com",
             nickname: "ui",
             isActive: true,
@@ -205,7 +205,7 @@ export const mockProjectDatas: Project[] = [
     ],
   },
   {
-    id: 2,
+    id: "2",
     name: "하이루 프로젝트",
     description: "2번 입니당",
     createdAt: "2024-10-12",
@@ -215,7 +215,7 @@ export const mockProjectDatas: Project[] = [
     tasks: [],
   },
   {
-    id: 3,
+    id: "3",
     name: "머선 프로젝트",
     description: "3번 입니당",
     createdAt: "2023-01-20",

@@ -1,6 +1,5 @@
-import Header from "@components/sections/Header";
+import Header from "@components/Header";
 import ProjectList from "@components/projectList/ProjectList";
-import { useProjectStore } from "@store/useProjectStore";
 import { useNavigate } from "react-router-dom";
 import Modal from "@/components/common/Modal";
 import CreateProjectForm, {
@@ -8,16 +7,17 @@ import CreateProjectForm, {
   FormData,
 } from "@/components/projectList/CreateProjectForm";
 import { useState } from "react";
-import Project from "@models/Project";
+import { ProjectBasic } from "@models/Project";
 import { format } from "date-fns";
+import { useMutation } from "@tanstack/react-query";
+import { createProject } from "@api/projectApi";
+import queryClient from "@/queryClient";
 
 const ProjectListPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({});
   const [errorMsg, setErrorMsg] = useState<ErrorMessage>({});
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
-  const addProject = useProjectStore((state) => state.addProject);
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -48,29 +48,38 @@ const ProjectListPage = () => {
     return true;
   };
 
+  const { mutate } = useMutation<ProjectBasic, Error, ProjectBasic>({
+    mutationFn: (newProject: ProjectBasic) => createProject(newProject),
+    onSuccess: (data) => {
+      // 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      handleCloseModal();
+      navigate(`/project/${data.id}/kanban`);
+    },
+    onError: (error) => {
+      console.error("프로젝트 생성 실패:", error);
+    },
+  });
+
   const handleCreateProject = () => {
     if (validationCheck()) {
-      const newProject: Project = {
-        id: Date.now(), // 임시 ID 생성
+      const newProject: ProjectBasic = {
+        id: "",
         name: formData.name,
         description: formData.description,
         createdAt: format(new Date(), "yyyy-MM-dd"),
         progress: 0,
-        members: [],
-        endDate: formData.endDate ?? "",
-        tasks: [],
+        endDate: formData.endDate
+          ? new Date(formData.endDate).getTime().toString()
+          : "",
       };
-      // store에 프로젝트 추가
-      addProject(newProject);
 
-      handleCloseModal();
-      // 새로 생성된 프로젝트의 칸반보드로 이동
-      navigate(`/project/${newProject.id}/kanban`);
+      mutate(newProject);
     }
   };
 
   return (
-    <div className="box-border h-screen mx-40 py-10">
+    <div className="flex flex-col border-box h-screen mx-40 py-10">
       <Header
         title={"프로젝트"}
         buttonLabel={"프로젝트 생성"}
