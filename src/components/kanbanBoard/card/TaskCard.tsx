@@ -3,6 +3,7 @@ import Task from "@models/Task";
 import CardHeader from "@components/kanbanBoard/card/CardHeader";
 import CardFooter from "@components/kanbanBoard/card/CardFooter";
 import { useTaskCardDragContext } from "@/context/TaskCardDragContext";
+import { fromUnixTime } from "date-fns";
 
 interface TaskCardProps {
   task: Task;
@@ -28,7 +29,7 @@ const TaskCard = ({ task }: TaskCardProps) => {
   };
 
   const handleDragEnd = () => {
-    setDraggedTaskId(-1);
+    setDraggedTaskId("");
   };
 
   return (
@@ -47,8 +48,8 @@ const TaskCard = ({ task }: TaskCardProps) => {
         </p>
       </div>
       <CardFooter
-        startDate={task.startDate}
-        endDate={task.endDate}
+        startDate={fromUnixTime(parseInt(task.startDate) / 1000).toDateString()}
+        endDate={fromUnixTime(parseInt(task.endDate) / 1000).toDateString()}
         subTasks={task.subTasks}
       />
     </div>

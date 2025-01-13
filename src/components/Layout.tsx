@@ -1,37 +1,28 @@
-import { Outlet, useParams } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import LeftToolPane from "@components/LeftToolPane";
-import { useQuery } from "@tanstack/react-query";
-import { fetchProjectById } from "@api/projectApi";
-import Project from "@models/Project";
-
-export interface OutletContext {
-  project: Project;
-}
+import { useProjectData } from "@hooks/useProjectData";
+import LoadingComponent from "@components/common/LoadingComponent";
 
 const Layout = () => {
-  const { id } = useParams<{ id: string }>();
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["project", id],
-    queryFn: () => {
-      if (!id) throw new Error("프로젝트 ID가 없습니다.");
-      return fetchProjectById(id);
-    },
-    enabled: !!id,
-  });
+  const { data: project, isLoading } = useProjectData();
 
-  if (!data?.getProjectById) {
+  if (isLoading) {
+    return <LoadingComponent />;
+  }
+
+  if (!project) {
     return <div>프로젝트를 찾을 수 없습니다.</div>;
   }
 
   return (
     <div className="relative">
-      {data.getProjectById && (
+      {project && (
         <div className="w-64 border-r border-gray-200 bg-gray-50">
-          <LeftToolPane project={data.getProjectById} />
+          <LeftToolPane project={project} />
         </div>
       )}
-      <div className={`h-screen ${data.getProjectById ? "ml-[5px]" : ""}`}>
-        <Outlet context={{ project: data.getProjectById }} />
+      <div className={`h-screen ${project ? "ml-[5px]" : ""}`}>
+        <Outlet />
       </div>
     </div>
   );

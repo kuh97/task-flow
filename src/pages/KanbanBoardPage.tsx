@@ -1,8 +1,5 @@
 import { useState } from "react";
-import { useOutletContext } from "react-router-dom";
-import { useProjectStore } from "@store/useProjectStore";
 import Task, { Status, statusNames } from "@models/Task";
-import { OutletContext } from "@components/Layout";
 import Board from "@components/kanbanBoard/Board";
 import TaskCardDragProvider from "@/context/TaskCardDragContext";
 import Header from "@components/Header";
@@ -11,9 +8,14 @@ import CreateTaskForm, {
   ErrorMessage,
   FormData,
 } from "@components/kanbanBoard/CreateTaskForm";
+import { useProjectData } from "@hooks/useProjectData";
 
 const KanbanBoardPage = () => {
-  const { project } = useOutletContext<OutletContext>();
+  const { data: project } = useProjectData();
+  if (project == null) {
+    return null;
+  }
+
   const initialFormData = {
     name: "",
     description: "",

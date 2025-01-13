@@ -11,6 +11,7 @@ import Layout from "@components/Layout";
 import KanbanBoardPage from "@pages/KanbanBoardPage";
 import GanttChartPage from "@pages/GanttChartPage";
 import MembersPage from "@pages/MembersPage";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
           </Route>
         </Routes>
       </Router>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 };

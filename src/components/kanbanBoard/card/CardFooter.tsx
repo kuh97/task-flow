@@ -5,10 +5,10 @@ import { ko } from "date-fns/locale/ko";
 interface CardFooterProps {
   startDate: string;
   endDate: string;
-  subTasks: Task[];
+  subTasks?: Task[];
 }
 
-const CardFooter = ({ startDate, endDate, subTasks }: CardFooterProps) => {
+const CardFooter = ({ startDate, endDate, subTasks = [] }: CardFooterProps) => {
   return (
     <div className="flex items-center h-[30px]">
       <div className="flex px-2 py-[2px] mr-3 bg-[#f1f1f1] rounded-full">

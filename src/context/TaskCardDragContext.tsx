@@ -1,8 +1,8 @@
 import { createContext, PropsWithChildren, useContext, useState } from "react";
 
 interface DragContextProps {
-  draggedTaskId: number;
-  setDraggedTaskId: (taskId: number) => void;
+  draggedTaskId: string;
+  setDraggedTaskId: (taskId: string) => void;
 }
 
 const TaskCardDragContext = createContext<DragContextProps | undefined>(
@@ -10,7 +10,7 @@ const TaskCardDragContext = createContext<DragContextProps | undefined>(
 );
 
 export const TaskCardDragProvider = ({ children }: PropsWithChildren) => {
-  const [draggedTaskId, setDraggedTaskId] = useState<number>(-1);
+  const [draggedTaskId, setDraggedTaskId] = useState<string>("");
 
   return (
     <TaskCardDragContext.Provider value={{ draggedTaskId, setDraggedTaskId }}>
