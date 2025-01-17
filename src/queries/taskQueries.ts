@@ -10,6 +10,8 @@ export const GET_TASK_BY_ID = gql`
       priority
       progress
       projectId
+      startDate
+      endDate
       managers {
         id
         nickname
@@ -44,7 +46,7 @@ export const GET_TASKS = gql`
   }
 `;
 
-export const CREATE_TASK_MUTATION = gql`
+export const CREATE_TASK = gql`
   mutation CreateTask(
     $projectId: ID!
     $name: String!
@@ -118,16 +120,26 @@ export const UPDATE_TASK_MUTATION = gql`
   }
 `;
 
-export const UPDATE_TASK_STATUS = gql`
-  mutation UpdateTask($id: ID!, $status: String) {
-    updateTask(id: $id, status: $status) {
+export const DELETE_TASK_MUTATION = gql`
+  mutation DeleteTask($id: ID!) {
+    deleteTask(id: $id) {
+      id
+      name
+      description
+      status
+    }
+  }
+`;
+
+export const CREATE_SUBTASK = gql`
+  mutation CreateSubTask($parentTaskId: ID!, $task: TaskInput!) {
+    createSubTask(parentTaskId: $parentTaskId, task: $task) {
       id
       name
       description
       status
       priority
       progress
-      projectId
       managers {
         id
         nickname
@@ -136,17 +148,6 @@ export const UPDATE_TASK_STATUS = gql`
         id
         name
       }
-    }
-  }
-`;
-
-export const DELETE_TASK_MUTATION = gql`
-  mutation DeleteTask($id: ID!) {
-    deleteTask(id: $id) {
-      id
-      name
-      description
-      status
     }
   }
 `;

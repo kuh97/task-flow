@@ -3,6 +3,7 @@ import Task from "@models/Task";
 import CardHeader from "@components/kanbanBoard/card/CardHeader";
 import CardFooter from "@components/kanbanBoard/card/CardFooter";
 import { useTaskCardDragContext } from "@/context/TaskCardDragContext";
+import { useTaskSelectContext } from "@/context/TaskSelectContext";
 import { fromUnixTime } from "date-fns";
 
 interface TaskCardProps {
@@ -11,9 +12,10 @@ interface TaskCardProps {
 
 const TaskCard = ({ task }: TaskCardProps) => {
   const { setDraggedTaskId } = useTaskCardDragContext();
+  const { setSelectedTaskId } = useTaskSelectContext();
 
   const handleClickCard = () => {
-    console.log("카드 상세");
+    setSelectedTaskId(task.id);
   };
 
   const handleDragStart = (e: React.DragEvent) => {

@@ -4,6 +4,8 @@ interface TextAreaProps {
   errorMessage?: string;
   placeholder?: string;
   className?: string;
+  autoFocus?: boolean;
+  readOnly?: boolean;
 }
 
 const TextArea = ({
@@ -12,6 +14,8 @@ const TextArea = ({
   errorMessage,
   placeholder = "",
   className = "",
+  autoFocus = false,
+  readOnly = false,
 }: TextAreaProps) => {
   return (
     <>
@@ -24,6 +28,8 @@ const TextArea = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
+        autoFocus={autoFocus}
+        readOnly={readOnly}
       />
       {errorMessage && (
         <span className="text-xs text-red-600">{errorMessage}</span>

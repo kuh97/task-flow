@@ -8,13 +8,16 @@ import CreateTaskForm, {
   ErrorMessage,
   FormData,
 } from "@components/kanbanBoard/CreateTaskForm";
-import { useProjectData } from "@hooks/useProjectData";
+import { useProjectData } from "@/hooks/project/useProjectMutation";
+import { useCreateTask } from "@/hooks/task/useTaskMutation";
 
 const KanbanBoardPage = () => {
   const { data: project } = useProjectData();
   if (project == null) {
     return null;
   }
+
+  const { mutate: createTask } = useCreateTask();
 
   const initialFormData = {
     name: "",
@@ -85,7 +88,7 @@ const KanbanBoardPage = () => {
         priority: false,
       };
 
-      // addTask(data.getProjectById.id, newTask);
+      createTask(newTask);
       handleCloseModal();
     }
   };

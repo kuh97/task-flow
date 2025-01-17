@@ -1,4 +1,4 @@
-import { useProjectData } from "@hooks/useProjectData";
+import { useProjectData } from "@/hooks/project/useProjectMutation";
 
 const GanttChartPage = () => {
   const { data: project } = useProjectData();

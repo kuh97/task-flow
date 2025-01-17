@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import Icon from "./Icon";
 
 export interface Option {
   label: string;
@@ -47,19 +48,10 @@ const Dropdown = ({
           bg-white flex items-center justify-between"
       >
         <span>{selectedOption?.label || placeholder}</span>
-        <svg
-          className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
+        <Icon
+          name={"downArrow"}
+          className={`w-5 h-5 transition-transform ${isOpen ? "rotate-180" : ""}`}
+        />
       </button>
 
       {isOpen && (
@@ -76,19 +68,7 @@ const Dropdown = ({
                 ${option.value === value ? "bg-indigo-50 text-indigo-600" : "text-gray-900"}`}
             >
               {option.value === value && (
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
+                <Icon name={"saveButton"} className={"w-5 h-5 pr-1"} />
               )}
               {option.label}
             </button>
