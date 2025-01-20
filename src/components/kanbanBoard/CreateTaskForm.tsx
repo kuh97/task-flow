@@ -48,6 +48,7 @@ const CreateTaskForm = ({
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [searchValue, setSearchValue] = useState("");
   const [selectedMembers, setSelectedMembers] = useState<Member[]>([]);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
   const statusOptions: Option[] = [
     { label: "작업 예정", value: "ToDo" },
@@ -80,7 +81,7 @@ const CreateTaskForm = ({
     setSearchValue("");
   };
 
-  const handleRemoveMember = (memberId: number) => {
+  const handleRemoveMember = (memberId: string) => {
     setSelectedMembers((prev) => {
       const newMembers = prev.filter((member) => member.id !== memberId);
       setFormData((prevForm) => ({
@@ -181,6 +182,8 @@ const CreateTaskForm = ({
                 onChangeStart={handleChangeStartDate}
                 onChangeEnd={handleChangeEndDate}
                 errorMessage={errorMessages["date"]}
+                isOpen={isDatePickerOpen}
+                onOpenChange={setIsDatePickerOpen}
               />
             </div>
 

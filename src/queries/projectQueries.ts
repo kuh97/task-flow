@@ -26,6 +26,18 @@ export const GET_PROJECT_BY_ID = gql`
         managers {
           id
         }
+        subTasks {
+          id
+          projectId
+          name
+          description
+          status
+          startDate
+          endDate
+          managers {
+            id
+          }
+        }
       }
     }
   }

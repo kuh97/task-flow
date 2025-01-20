@@ -6,6 +6,7 @@ import {
   GET_PROJECTS,
 } from "@queries/projectQueries";
 import Project, { ProjectBasic } from "@models/Project";
+import { convertProjectDates } from "@/utils/convertDateFormat";
 
 const client = new GraphQLClient(GRAPHQL_ENDPOINT);
 
@@ -23,7 +24,16 @@ export const fetchProjectById = async (
   const variables = {
     id,
   };
-  return client.request(GET_PROJECT_BY_ID, variables);
+  const response = await client.request<GetProjectByIdResponse>(
+    GET_PROJECT_BY_ID,
+    variables
+  );
+
+  if (response.getProjectById) {
+    response.getProjectById = convertProjectDates(response.getProjectById);
+  }
+
+  return response;
 };
 
 interface GetProjectsResponse {
@@ -38,6 +48,10 @@ export const fetchProjects = async (): Promise<GetProjectsResponse> => {
   return client.request(GET_PROJECTS);
 };
 
+interface CreateProjectResponse {
+  createProject: ProjectBasic;
+}
+
 /**
  * 프로젝트 생성 api
  * @param name
@@ -46,7 +60,7 @@ export const fetchProjects = async (): Promise<GetProjectsResponse> => {
  */
 export const createProject = async (
   newProject: ProjectBasic
-): Promise<ProjectBasic> => {
+): Promise<CreateProjectResponse> => {
   const variables = {
     name: newProject.name,
     description: newProject.description,

@@ -3,6 +3,7 @@ import { ko } from "date-fns/locale";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./CustomRangeDatePicker.css";
+import Icon from "./Icon";
 
 interface CustomRangeDatePickerProps {
   startDate: Date | null;
@@ -10,6 +11,10 @@ interface CustomRangeDatePickerProps {
   onChangeStart: (date: Date | null) => void;
   onChangeEnd: (date: Date | null) => void;
   errorMessage?: string;
+  onBlur?: () => void;
+  isOpen?: boolean;
+  onOpenChange?: (isOpen: boolean) => void;
+  mustSelectFullRange?: boolean;
 }
 
 const CustomRangeDatePicker = ({
@@ -18,12 +23,29 @@ const CustomRangeDatePicker = ({
   onChangeStart,
   onChangeEnd,
   errorMessage,
+  onBlur,
+  isOpen = false,
+  onOpenChange,
+  mustSelectFullRange = false,
 }: CustomRangeDatePickerProps) => {
   const handleDateChange = (dates: [Date | null, Date | null]) => {
     if (dates) {
       const [start, end] = dates;
       onChangeStart(start);
       onChangeEnd(end);
+
+      if (mustSelectFullRange && (!start || !end)) {
+        onOpenChange?.(true);
+      }
+    }
+  };
+
+  const handleBlur = () => {
+    if (mustSelectFullRange && (!startDate || !endDate)) {
+      onOpenChange?.(true);
+      if (onBlur) onBlur();
+    } else {
+      onOpenChange?.(false);
     }
   };
 
@@ -40,9 +62,12 @@ const CustomRangeDatePicker = ({
         popperPlacement="bottom"
         showPopperArrow={false}
         locale={ko}
-        calendarClassName="bg-white border rounded-lg shadow-lg"
+        calendarClassName={`bg-white border rounded-lg shadow-lg ${mustSelectFullRange && errorMessage && "mt-4"}`}
         customInput={<CustomInput errorMessage={errorMessage} />}
         disabledKeyboardNavigation
+        onClickOutside={handleBlur}
+        open={isOpen}
+        onInputClick={() => onOpenChange?.(true)}
       />
       {errorMessage && (
         <span className="text-xs text-red-600">{errorMessage}</span>
@@ -66,7 +91,7 @@ const CustomInput = forwardRef(({ errorMessage, ...props }: any, ref) => {
         type="text"
         readOnly
       />
-      <div className="absolute right-[7px] top-[15px]">
+      <div className="absolute right-[7px] top-[17px]">
         {hasValue ? (
           <button
             type="button"
@@ -76,21 +101,7 @@ const CustomInput = forwardRef(({ errorMessage, ...props }: any, ref) => {
             }}
             className="text-gray-400 hover:text-gray-600"
           >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M18 6L6 18M6 6L18 18"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <Icon name={"deleteButton"} className={"w-5 h-5"} />
           </button>
         ) : (
           <CalendarIcon className="" />

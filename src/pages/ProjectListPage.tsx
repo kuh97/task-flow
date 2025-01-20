@@ -7,7 +7,7 @@ import CreateProjectForm, {
   FormData,
 } from "@/components/projectList/CreateProjectForm";
 import { useState } from "react";
-import { ProjectBasic } from "@models/Project";
+import Project, { ProjectBasic } from "@models/Project";
 import { format } from "date-fns";
 import { useMutation } from "@tanstack/react-query";
 import { createProject } from "@api/projectApi";
@@ -48,13 +48,20 @@ const ProjectListPage = () => {
     return true;
   };
 
-  const { mutate } = useMutation<ProjectBasic, Error, ProjectBasic>({
+  const { mutate } = useMutation<
+    { createProject: ProjectBasic },
+    Error,
+    ProjectBasic
+  >({
     mutationFn: (newProject: ProjectBasic) => createProject(newProject),
     onSuccess: (data) => {
       // 캐시 무효화
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       handleCloseModal();
-      navigate(`/project/${data.id}/kanban`);
+
+      const { createProject } = data;
+
+      navigate(`/project/${createProject.id}/kanban`);
     },
     onError: (error) => {
       console.error("프로젝트 생성 실패:", error);

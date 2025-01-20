@@ -1,4 +1,4 @@
-import { useProjectData } from "@hooks/useProjectData";
+import { useProjectData } from "@/hooks/project/useProjectMutation";
 
 const MembersPage = () => {
   const { data: project } = useProjectData();
