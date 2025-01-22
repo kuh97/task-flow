@@ -1,10 +1,11 @@
-import { format } from "date-fns";
+import { format, fromUnixTime } from "date-fns";
 
 export const convertToDateString = (
-  timestamp: string | undefined
+  timestamp: string | undefined,
+  dateFormat: string = "yyyy-MM-dd"
 ): string | undefined => {
   if (!timestamp) return undefined;
-  return format(new Date(parseInt(timestamp)), "yyyy-MM-dd");
+  return format(fromUnixTime(parseInt(timestamp) / 1000), dateFormat);
 };
 
 export const convertTaskDates = (task: any) => {

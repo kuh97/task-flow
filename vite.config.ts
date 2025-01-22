@@ -9,6 +9,7 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
       "@components": path.resolve(__dirname, "./src/components"),
+      "@common": path.resolve(__dirname, "./src/components/common"),
       "@pages": path.resolve(__dirname, "./src/pages"),
       "@models": path.resolve(__dirname, "./src/models"),
       "@assets": path.resolve(__dirname, "./src/assets"),
@@ -16,6 +17,7 @@ export default defineConfig({
       "@queries": path.resolve(__dirname, "./src/queries"),
       "@api": path.resolve(__dirname, "./src/api"),
       "@hooks": path.resolve(__dirname, "./src/hooks"),
+      "@utils": path.resolve(__dirname, "./src/utils"),
     },
   },
 });

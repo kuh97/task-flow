@@ -23,6 +23,7 @@ export const GET_PROJECT_BY_ID = gql`
         status
         startDate
         endDate
+        progress
         managers {
           id
         }
