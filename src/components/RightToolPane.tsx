@@ -6,7 +6,7 @@ interface RightToolPaneProps {
 }
 
 import { useEffect, useState } from "react";
-import Icon from "./common/Icon";
+import Icon from "@common/icon/Icon";
 import Dropdown, { Option } from "./common/Dropdown";
 import { Status } from "@/models/Task";
 import CustomRangeDatePicker from "./common/CustomRangeDatePicker";

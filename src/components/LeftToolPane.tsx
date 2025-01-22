@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Icon from "@components/common/Icon";
+import Icon from "@/components/common/icon/Icon";
 import Project from "@models/Project";
 import { useNavigate } from "react-router-dom";
 

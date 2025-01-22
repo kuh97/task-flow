@@ -4,7 +4,6 @@ import CardHeader from "@components/kanbanBoard/card/CardHeader";
 import CardFooter from "@components/kanbanBoard/card/CardFooter";
 import { useTaskCardDragContext } from "@/context/TaskCardDragContext";
 import { useTaskSelectContext } from "@/context/TaskSelectContext";
-import { fromUnixTime } from "date-fns";
 
 interface TaskCardProps {
   task: Task;
@@ -50,8 +49,8 @@ const TaskCard = ({ task }: TaskCardProps) => {
         </p>
       </div>
       <CardFooter
-        startDate={fromUnixTime(parseInt(task.startDate) / 1000).toDateString()}
-        endDate={fromUnixTime(parseInt(task.endDate) / 1000).toDateString()}
+        startDate={task.startDate}
+        endDate={task.endDate}
         subTasks={task.subTasks}
       />
     </div>

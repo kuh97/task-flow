@@ -1,5 +1,5 @@
 import { PropsWithChildren } from "react";
-import CloseButtonIcon from "@components/common/CloseButtonIcon";
+import CloseButtonIcon from "@/components/common/icon/CloseButtonIcon";
 
 interface ModalProps {
   title: string;

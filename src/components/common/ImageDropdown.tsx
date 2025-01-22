@@ -1,26 +1,25 @@
 import { useState, useRef, useEffect } from "react";
-import Icon from "@common/icon/Icon";
 import ChevronIcon from "@common/icon/ChevronIcon";
 
-export interface Option {
+interface Option {
   label: string;
   value: string;
 }
 
 interface DropdownProps {
+  image: React.ReactNode;
   value: string;
   options: Option[];
   onChange: (value: string) => void;
-  placeholder?: string;
   className?: string;
 }
 
-const Dropdown = ({
+const ImageDropdown = ({
+  image,
   value,
   options,
   onChange,
   className,
-  placeholder = "선택하세요",
 }: DropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -45,12 +44,12 @@ const Dropdown = ({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full h-10 px-3 mt-2 text-sm font-normal text-gray-900
-          border-[1.5px] border-gray-300 rounded-md
-          hover:border-gray-400 focus:outline-none focus:border-indigo-600
-          bg-white flex items-center justify-between"
+        className="w-full h-9 px-2 py-1 mt-2 text-sm font-normal text-gray-900 rounded-md
+          bg-white hover:bg-gray-light focus:outline-none active:bg-gray
+          flex items-center"
       >
-        <span>{selectedOption?.label || placeholder}</span>
+        {image}
+        <span className="ml-1">{selectedOption?.label ?? ""}</span>
         <ChevronIcon isDown={!isOpen} />
       </button>
 
@@ -64,11 +63,23 @@ const Dropdown = ({
                 onChange(option.value);
                 setIsOpen(false);
               }}
-              className={`w-full px-3 py-2.5 text-left text-sm hover:bg-indigo-50 flex items-center
+              className={`w-full px-2 py-1 h-9 text-left text-sm hover:bg-indigo-50 flex items-center
                 ${option.value === value ? "bg-indigo-50 text-indigo-600" : "text-gray-900"}`}
             >
               {option.value === value && (
-                <Icon name={"saveButton"} className={"w-5 h-5 pr-1"} />
+                <svg
+                  className="w-4 h-4 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
               )}
               {option.label}
             </button>
@@ -79,4 +90,4 @@ const Dropdown = ({
   );
 };
 
-export default Dropdown;
+export default ImageDropdown;

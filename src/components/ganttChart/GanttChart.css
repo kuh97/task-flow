@@ -1,0 +1,60 @@
+:root {
+  --dhx-gantt-font-family: "Pretendard", sans-serif;
+}
+
+.gantt_task_progress {
+  background-color: #4338ca;
+}
+
+.gantt_task_row,
+.gantt_row {
+  border-bottom: none;
+}
+
+.gantt_grid_data .gantt_row:hover,
+.gantt_grid_data .gantt_row.odd:hover {
+  background-color: #f0f0f0;
+}
+
+.gantt_link_control {
+  display: none; /* 링크 숨기기 */
+}
+
+.gantt_grid_head_cell {
+  display: table-cell; /* 테이블 셀처럼 설정 */
+  vertical-align: middle; /* 수직 가운데 정렬 */
+  height: 46px;
+  text-align: center;
+}
+
+/* 컬럼 */
+.gantt_grid_scale {
+  color: #374151;
+  height: 46px !important;
+}
+
+/* scale 컬럼 */
+.gantt_task_scale {
+  height: 46px !important;
+}
+
+.gantt_scale_cell {
+  border: none;
+  height: 23px;
+}
+
+.gantt_scale_line {
+  height: 23px !important;
+}
+
+/* 하위 셀 (subscale, 예: 월 단위) */
+.gantt_scale_line:first-child {
+  color: #888f9c;
+  font-weight: normal;
+  font-size: 0.8rem;
+}
+
+.gantt_scale_line:last-child {
+  color: #374151;
+  border-top: none;
+}
