@@ -4,6 +4,8 @@ import {
   UPDATE_TASK_MUTATION,
   CREATE_TASK,
   CREATE_SUBTASK,
+  DELETE_TASK,
+  DELETE_SUBTASK,
 } from "@queries/taskQueries";
 import Task from "@models/Task";
 
@@ -49,6 +51,16 @@ export const createTask = async (
 };
 
 /**
+ * Task delete api
+ */
+export const deleteTask = async (
+  taskId: string
+): Promise<{ deleteTask: Task }> => {
+  const variables = { id: taskId };
+  return client.request(DELETE_TASK, variables);
+};
+
+/**
  * subTask create api
  */
 export const createSubTask = async (
@@ -61,4 +73,16 @@ export const createSubTask = async (
   };
 
   return client.request(CREATE_SUBTASK, variables);
+};
+
+/**
+ * subTask delete api
+ */
+export const deleteSubTask = async (
+  parentTaskId: string,
+  subTaskId: string
+): Promise<{ deleteSubTask: Task }> => {
+  const variables = { parentTaskId, subTaskId };
+
+  return client.request(DELETE_SUBTASK, variables);
 };
