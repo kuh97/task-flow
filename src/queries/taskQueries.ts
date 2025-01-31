@@ -120,13 +120,10 @@ export const UPDATE_TASK_MUTATION = gql`
   }
 `;
 
-export const DELETE_TASK_MUTATION = gql`
+export const DELETE_TASK = gql`
   mutation DeleteTask($id: ID!) {
     deleteTask(id: $id) {
       id
-      name
-      description
-      status
     }
   }
 `;
@@ -147,6 +144,17 @@ export const CREATE_SUBTASK = gql`
       subTasks {
         id
         name
+      }
+    }
+  }
+`;
+
+export const DELETE_SUBTASK = gql`
+  mutation DeleteSubTask($parentTaskId: ID!, $subTaskId: ID!) {
+    deleteSubTask(parentTaskId: $parentTaskId, subTaskId: $subTaskId) {
+      id
+      subTasks {
+        id
       }
     }
   }

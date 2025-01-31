@@ -14,10 +14,9 @@ import { format } from "date-fns";
 import TextArea from "./common/TextArea";
 import TextField from "./common/TextField";
 import { useProjectData } from "@/hooks/project/useProjectMutation";
-import {
-  useCreateSubTask,
-  useUpdateTaskMutation,
-} from "@/hooks/task/useTaskMutation";
+import { useTaskMutations } from "@/hooks/task/useTaskMutation";
+import KebabMenu from "./common/KebabMenu";
+import Modal from "./common/Modal";
 
 const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
   const {
@@ -31,11 +30,8 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
     return null;
   }
 
-  const { mutate: updateTask } = useUpdateTaskMutation({
-    projectId: project.id,
-  });
-
-  const { mutate: createSubTask } = useCreateSubTask();
+  const { updateTask, deleteTask, createSubTask, deleteSubTask } =
+    useTaskMutations({ projectId: project.id });
 
   const parentTask = project.tasks.find((t) => t.id === selectedTaskId);
   const selectedTask = isSubTask
@@ -56,6 +52,9 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
 
   const [isAddingSubTask, setIsAddingSubTask] = useState<boolean>(false);
   const [newSubTaskTitle, setNewSubTaskTitle] = useState<string>("");
+  const [isKebabMenuOpen, setIsKebabMenuOpen] = useState<boolean>(false);
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (selectedTask) {
@@ -64,6 +63,8 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
       setErrorMsg("");
       setIsDatePickerOpen(false);
       setIsAddingSubTask(false);
+      setIsKebabMenuOpen(false);
+      setIsDeleteModalOpen(false);
     }
   }, [selectedTask]);
 
@@ -109,6 +110,34 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
     setIsTitleEditMode(false);
     setEditTitle("");
   };
+
+  const handleClickThreeDots = () => {
+    setIsKebabMenuOpen(!isKebabMenuOpen);
+  };
+
+  const confirmDelete = () => {
+    if (project && selectedTask) {
+      if (isSubTask && parentTask) {
+        deleteSubTask({
+          parentTaskId: parentTask.id,
+          subTaskId: selectedTask.id,
+        });
+        setSelectedSubTaskId(null);
+      } else {
+        deleteTask({ taskId: selectedTask.id });
+        setSelectedTaskId(null);
+      }
+      setIsDeleteModalOpen(false);
+      setIsKebabMenuOpen(false);
+    }
+  };
+
+  const kebabMenuItems = [
+    {
+      label: "삭제",
+      onClick: () => setIsDeleteModalOpen(true),
+    },
+  ];
 
   const handleChangeStatus = (value: string) => {
     if (!project || !selectedTask || selectedTask?.status === value) return;
@@ -246,29 +275,21 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
   return (
     <>
       <div
-        className={`fixed right-0 top-0 w-[400px] h-full bg-white shadow-lg z-50`}
+        className={`fixed right-0 top-0 w-[400px] h-full bg-white shadow-lg z-48`}
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          className="fixed right-[400px] p-2 py-5 bg-white rounded-l-md shadow-[-2px_0_4px_rgba(0,0,0,0.1)] group"
+          className={`fixed right-[400px] p-2 py-5 bg-white rounded-l-md shadow-[-2px_0_4px_rgba(0,0,0,0.1)] group disabled:bg-[rgb(204,204,204)]`}
           onClick={(e) => {
             e.stopPropagation();
             handleClickHomeButton();
           }}
+          disabled={isDeleteModalOpen}
         >
           <Icon name="rightArrow" className={`w-5 h-5 text-gray-400`} />
         </button>
 
         <div className="flex flex-col h-full">
-          {/* <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
-            <button
-              className="p-4 rounded-full shadow-lg transition-colors duration-200 flex items-center justify-center hover:bg-gray-100 group"
-              onClick={() => {}}
-            >
-              <Icon name="trash" className="w-6 h-6 text-red-500" />
-            </button>
-          </div> */}
-
           {isSubTask && parentTask && (
             <button
               className="w-fit text-lg p-4 text-indigo-600 hover:underline inline-flex items-center gap-1"
@@ -318,6 +339,22 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
                 {selectedTask.name}
               </h1>
             )}
+            <div className="relative">
+              <button
+                onMouseDown={handleClickThreeDots}
+                className="p-1 hover:bg-gray-50 rounded cursor-pointer"
+                onBlurCapture={handleClickThreeDots}
+              >
+                <Icon name={"threeDots"} className={"w-8 h-8 rotate-90"} />
+              </button>
+              {isKebabMenuOpen && (
+                <KebabMenu
+                  menuItems={kebabMenuItems}
+                  onClose={() => handleClickThreeDots}
+                  className="w-[60px]"
+                />
+              )}
+            </div>
           </div>
 
           <div className="flex-1 overflow-y-auto">
@@ -469,7 +506,16 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
           </div>
         </div>
       </div>
-      {/* <Icon name={"trash"} className={"w-5 h-5"} /> */}
+      <Modal
+        title="작업 삭제"
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        buttonLabel="삭제"
+        onClick={confirmDelete}
+        className="bg-opacity-20"
+      >
+        <p className="my-4">정말로 이 작업을 삭제하시겠습니까?</p>
+      </Modal>
     </>
   );
 };

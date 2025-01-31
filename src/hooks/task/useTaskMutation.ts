@@ -1,5 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createSubTask, createTask, updateTask } from "@/api/taskApi";
+import {
+  createSubTask,
+  createTask,
+  updateTask,
+  deleteTask,
+  deleteSubTask,
+} from "@/api/taskApi";
 import Task from "@/models/Task";
 import Project from "@/models/Project";
 
@@ -7,10 +13,10 @@ interface UseTaskMutationProps {
   projectId: string;
 }
 
-export const useUpdateTaskMutation = ({ projectId }: UseTaskMutationProps) => {
+export const useTaskMutations = ({ projectId }: UseTaskMutationProps) => {
   const queryClient = useQueryClient();
 
-  return useMutation<
+  const updateTaskMutation = useMutation<
     Task,
     Error,
     Partial<Task> & { id: string; parentTaskId?: string },
@@ -22,21 +28,19 @@ export const useUpdateTaskMutation = ({ projectId }: UseTaskMutationProps) => {
         queryKey: ["project", projectId],
       });
 
-      const getProjectById = queryClient.getQueryData<{
+      const previousProject = queryClient.getQueryData<{
         getProjectById: Project;
       }>(["project", projectId]);
 
-      if (getProjectById) {
-        const { getProjectById: previousProject } = getProjectById;
-        // 일반 task 업데이트
+      if (previousProject) {
+        const { getProjectById: project } = previousProject;
         queryClient.setQueryData(["project", projectId], {
           getProjectById: {
-            ...previousProject,
-            tasks: previousProject.tasks.map((task) => {
+            ...project,
+            tasks: project.tasks.map((task) => {
               if (task.id === updateData.id) {
                 return { ...task, ...updateData };
               } else if (task.id === updateData.parentTaskId) {
-                // 자식 task 업데이트
                 return {
                   ...task,
                   subTasks: task.subTasks.map((subTask) =>
@@ -52,7 +56,7 @@ export const useUpdateTaskMutation = ({ projectId }: UseTaskMutationProps) => {
         });
       }
 
-      return { previousProject: getProjectById };
+      return { previousProject };
     },
     onSettled: () => {
       queryClient.invalidateQueries({
@@ -68,17 +72,9 @@ export const useUpdateTaskMutation = ({ projectId }: UseTaskMutationProps) => {
       }
     },
   });
-};
 
-export const useCreateTask = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation<
-    { createTask: Task },
-    Error,
-    Task & { parentTaskId?: string }
-  >({
-    mutationFn: (newTask) => createTask(newTask),
+  const createTaskMutation = useMutation<{ createTask: Task }, Error, Task>({
+    mutationFn: createTask,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["project"] });
     },
@@ -86,12 +82,50 @@ export const useCreateTask = () => {
       console.error("작업 생성 실패:", error);
     },
   });
-};
 
-export const useCreateSubTask = () => {
-  const queryClient = useQueryClient();
+  const deleteTaskMutation = useMutation<
+    { deleteTask: Task },
+    Error,
+    { taskId: string },
+    { previousProject: { getProjectById: Project } | undefined }
+  >({
+    mutationFn: ({ taskId }) => deleteTask(taskId),
+    onMutate: async ({ taskId }) => {
+      await queryClient.cancelQueries({ queryKey: ["project", projectId] });
 
-  return useMutation<
+      const previousProject = queryClient.getQueryData<{
+        getProjectById: Project;
+      }>(["project", projectId]);
+
+      if (previousProject) {
+        const updatedTasks = previousProject.getProjectById.tasks.filter(
+          (task) => task.id !== taskId
+        );
+        queryClient.setQueryData(["project", projectId], {
+          getProjectById: {
+            ...previousProject.getProjectById,
+            tasks: updatedTasks,
+          },
+        });
+      }
+
+      return { previousProject };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+    },
+    onError: (error, _, context) => {
+      console.error("작업 삭제 실패:", error);
+      if (context?.previousProject) {
+        queryClient.setQueryData(
+          ["project", projectId],
+          context.previousProject
+        );
+      }
+    },
+  });
+
+  const createSubTaskMutation = useMutation<
     { createSubTask: Task },
     Error,
     {
@@ -103,7 +137,7 @@ export const useCreateSubTask = () => {
       createSubTask(parentTaskId, subTask),
     onSuccess: (data, variables) => {
       queryClient.setQueryData<{ getProjectById: Project } | undefined>(
-        ["project", variables.parentTaskId],
+        ["project", projectId],
         (oldData) => {
           if (!oldData) return oldData;
           const updatedTasks = oldData.getProjectById.tasks.map((task) => {
@@ -130,4 +164,66 @@ export const useCreateSubTask = () => {
       console.error("하위 작업 생성 실패:", error);
     },
   });
+
+  const deleteSubTaskMutation = useMutation<
+    { deleteSubTask: Task },
+    Error,
+    { parentTaskId: string; subTaskId: string },
+    { previousProject: { getProjectById: Project } | undefined }
+  >({
+    mutationFn: ({ parentTaskId, subTaskId }) =>
+      deleteSubTask(parentTaskId, subTaskId),
+    onMutate: async ({ parentTaskId, subTaskId }) => {
+      await queryClient.cancelQueries({ queryKey: ["project", projectId] });
+
+      const previousProject = queryClient.getQueryData<{
+        getProjectById: Project;
+      }>(["project", projectId]);
+
+      if (previousProject) {
+        const updatedTasks = previousProject.getProjectById.tasks.map(
+          (task) => {
+            if (task.id === parentTaskId) {
+              return {
+                ...task,
+                subTasks: task.subTasks.filter(
+                  (subTask) => subTask.id !== subTaskId
+                ),
+              };
+            }
+            return task;
+          }
+        );
+
+        queryClient.setQueryData(["project", projectId], {
+          getProjectById: {
+            ...previousProject.getProjectById,
+            tasks: updatedTasks,
+          },
+        });
+      }
+
+      return { previousProject };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+    },
+    onError: (error, _, context) => {
+      console.error("서브태스크 삭제 실패:", error);
+      if (context?.previousProject) {
+        queryClient.setQueryData(
+          ["project", projectId],
+          context.previousProject
+        );
+      }
+    },
+  });
+
+  return {
+    updateTask: updateTaskMutation.mutate,
+    createTask: createTaskMutation.mutate,
+    deleteTask: deleteTaskMutation.mutate,
+    createSubTask: createSubTaskMutation.mutate,
+    deleteSubTask: deleteSubTaskMutation.mutate,
+  };
 };

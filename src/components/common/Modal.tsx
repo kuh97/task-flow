@@ -7,6 +7,7 @@ interface ModalProps {
   onClose: () => void;
   buttonLabel: string;
   onClick: () => void;
+  className?: string;
 }
 
 const Modal = ({
@@ -16,9 +17,12 @@ const Modal = ({
   buttonLabel,
   onClick,
   children,
+  className = "",
 }: PropsWithChildren<ModalProps>) => {
   return isOpen ? (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div
+      className={`fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 ${className}`}
+    >
       <div className="flex flex-col bg-white p-6 rounded-lg min-w-fit">
         <div className="w-full flex justify-between">
           <h2 className="text-2xl font-bold">{title}</h2>

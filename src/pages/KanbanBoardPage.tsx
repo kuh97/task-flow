@@ -9,7 +9,7 @@ import CreateTaskForm, {
   FormData,
 } from "@components/kanbanBoard/CreateTaskForm";
 import { useProjectData } from "@/hooks/project/useProjectMutation";
-import { useCreateTask } from "@/hooks/task/useTaskMutation";
+import { useTaskMutations } from "@/hooks/task/useTaskMutation";
 
 const KanbanBoardPage = () => {
   const { data: project } = useProjectData();
@@ -17,7 +17,7 @@ const KanbanBoardPage = () => {
     return null;
   }
 
-  const { mutate: createTask } = useCreateTask();
+  const { createTask } = useTaskMutations({ projectId: project.id });
 
   const initialFormData = {
     name: "",

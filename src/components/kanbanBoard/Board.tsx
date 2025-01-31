@@ -2,8 +2,8 @@ import { Status } from "@models/Task";
 import Project from "@models/Project";
 import BoardHeader from "@components/kanbanBoard/BoardHeader";
 import BoardContent from "@components/kanbanBoard/BoardContent";
-import { useUpdateTaskMutation } from "@/hooks/task/useTaskMutation";
 import { STATUS_TITLES } from "@/constants/taskContants";
+import { useTaskMutations } from "@/hooks/task/useTaskMutation";
 
 interface BoardProps {
   taskType: Status;
@@ -11,7 +11,7 @@ interface BoardProps {
 }
 
 const Board = ({ taskType, project }: BoardProps) => {
-  const { mutate: updateTask } = useUpdateTaskMutation({
+  const { updateTask } = useTaskMutations({
     projectId: project.id,
   });
 
