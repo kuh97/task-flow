@@ -44,7 +44,7 @@ export const configureGantt = () => {
           <span>${task.status}</span>
         </div>
       `,
-      width: 150,
+      width: 120,
     },
   ];
 
@@ -60,4 +60,6 @@ export const configureGantt = () => {
     { unit: "year", step: 1, date: "%Y년" },
   ];
   gantt.config.links = false; // 링크를 비활성화
+  gantt.config.drag_progress = false; // 진행 상태 수정 비활성화
+  gantt.config.drag_move = false; // 작업 이동 비활성화
 };

@@ -11,9 +11,13 @@ import Project from "@/models/Project";
 
 interface UseTaskMutationProps {
   projectId: string;
+  onSuccess?: () => void;
 }
 
-export const useTaskMutations = ({ projectId }: UseTaskMutationProps) => {
+export const useTaskMutations = ({
+  projectId,
+  onSuccess,
+}: UseTaskMutationProps) => {
   const queryClient = useQueryClient();
 
   const updateTaskMutation = useMutation<
@@ -62,6 +66,7 @@ export const useTaskMutations = ({ projectId }: UseTaskMutationProps) => {
       queryClient.invalidateQueries({
         queryKey: ["project", projectId],
       });
+      onSuccess?.();
     },
     onError: (err, variables, context) => {
       if (context?.previousProject) {

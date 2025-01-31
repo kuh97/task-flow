@@ -1,12 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { differenceInDays } from "date-fns";
-import Task from "@models/Task";
+import Task, { Status } from "@models/Task";
 import gantt from "dhtmlx-gantt";
 import "dhtmlx-gantt/codebase/dhtmlxgantt.css";
 import "./GanttChart.css";
 import { configureGantt } from "./gantt.config";
 import { STATUS_TITLES } from "@/constants/taskContants";
 import ImageDropdown from "../common/ImageDropdown";
+import { GanttChartTask, flattenTasksForGanttChart } from "@/utils/taskUtils";
+import Modal from "../common/Modal";
+import TaskForm, { FormData } from "../kanbanBoard/TaskForm";
+import { useTaskValidation } from "@/hooks/task/useTaskValidation";
+import { useTaskMutations } from "@/hooks/task/useTaskMutation";
+import { useProjectStore } from "@/store/useProjectStore";
 
 interface GanttChartProps {
   tasks: Task[];
@@ -29,30 +35,47 @@ const scaleOptions = [
 
 const GanttChart = ({ tasks }: GanttChartProps) => {
   const [scale, setScale] = useState<string>("month");
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+
+  const initialFormData = {
+    name: "",
+    description: "",
+    status: "ToDo" as Status,
+    managers: [],
+    startDate: "",
+    endDate: "",
+  };
+  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [flattenedTasks, setFlattenedTasks] = useState<GanttChartTask[]>([]);
+  const { errorMsg, validationCheck, clearFieldError } = useTaskValidation();
+
   const ganttContainer = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const flattened = flattenTasksForGanttChart(tasks);
+    setFlattenedTasks(flattened);
     if (ganttContainer.current) {
       configureGantt();
       gantt.init(ganttContainer.current);
 
       const chartTasks = {
-        data: tasks.map((task) => {
-          const formattedStartDate = task.startDate;
-          const formattedEndDate = task.endDate;
+        data: flattened.map((task) => {
           const duration = differenceInDays(
-            new Date(formattedEndDate),
-            new Date(formattedStartDate)
+            new Date(task.endDate),
+            new Date(task.startDate)
           );
 
           return {
             id: task.id,
             text: task.name,
-            start_date: formattedStartDate,
+            start_date: task.startDate,
             duration,
             status: STATUS_TITLES[task.status],
             progress: task.progress / 100,
             color: "#655ddc",
+            parent: task.parent ?? "",
+            open: true,
           };
         }),
         links: [],
@@ -61,10 +84,32 @@ const GanttChart = ({ tasks }: GanttChartProps) => {
       gantt.parse(chartTasks);
     }
 
+    // 더블클릭 이벤트 등록
+    gantt.attachEvent("onTaskDblClick", function (id: string) {
+      // 사용자 정의 다이얼로그 표시
+      const targetTask = flattened.find((task) => task.id === id);
+      setSelectedTaskId(id);
+      if (targetTask) {
+        const targetFormData: FormData = {
+          name: targetTask.name,
+          description: targetTask.description,
+          status: targetTask.status,
+          managers: targetTask.managers,
+          startDate: targetTask.startDate,
+          endDate: targetTask.endDate,
+        };
+        setFormData(targetFormData);
+        setModalOpen(true);
+      }
+
+      // 기본 다이얼로그를 비활성화
+      return false;
+    });
+
     return () => {
       gantt.clearAll();
     };
-  }, []);
+  }, [tasks]);
 
   const handleChangeScale = (value: string) => {
     setScale(value);
@@ -91,6 +136,34 @@ const GanttChart = ({ tasks }: GanttChartProps) => {
     gantt.render();
   };
 
+  const { projectId } = useProjectStore();
+
+  const { updateTask } = useTaskMutations({
+    projectId,
+    onSuccess: () => setModalOpen(false),
+  });
+
+  const handleUpdateTask = () => {
+    // update task
+    if (validationCheck(formData) && selectedTaskId) {
+      const targetTask = flattenedTasks.find(
+        (task) => task.id === selectedTaskId
+      );
+      if (targetTask) {
+        updateTask({
+          id: targetTask.id,
+          name: formData.name,
+          description: formData.description,
+          status: formData.status,
+          managers: formData.managers,
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+          parentTaskId: targetTask.parent ?? "",
+        });
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col w-full h-full">
       <ImageDropdown
@@ -101,6 +174,21 @@ const GanttChart = ({ tasks }: GanttChartProps) => {
         className="w-[80px] mb-3"
       />
       <div ref={ganttContainer} className="w-full h-full" />
+      <Modal
+        title={"작업 수정"}
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        buttonLabel={"저장"}
+        onClick={handleUpdateTask}
+      >
+        <TaskForm
+          formData={formData}
+          setFormData={setFormData}
+          members={[]}
+          errorMsg={errorMsg}
+          clearFieldError={clearFieldError}
+        />
+      </Modal>
     </div>
   );
 };

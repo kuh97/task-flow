@@ -17,6 +17,7 @@ import { useProjectData } from "@/hooks/project/useProjectMutation";
 import { useTaskMutations } from "@/hooks/task/useTaskMutation";
 import KebabMenu from "./common/KebabMenu";
 import Modal from "./common/Modal";
+import { useProjectStore } from "@/store/useProjectStore";
 
 const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
   const {
@@ -25,7 +26,8 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
     selectedSubTaskId,
     setSelectedSubTaskId,
   } = useTaskSelectContext();
-  const { data: project } = useProjectData();
+  const { projectId } = useProjectStore();
+  const { data: project } = useProjectData(projectId);
   if (project === null) {
     return null;
   }

@@ -22,11 +22,12 @@ export interface ErrorMessage {
   date?: string;
 }
 
-interface CreateTaskFormProps {
+interface TaskFormProps {
+  formData: FormData;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
-  errorMessages: ErrorMessage;
-  setErrorMsg: React.Dispatch<React.SetStateAction<ErrorMessage>>;
   members: Member[];
+  errorMsg: ErrorMessage;
+  clearFieldError: (value: string) => void;
 }
 
 interface SearchableItem {
@@ -35,19 +36,27 @@ interface SearchableItem {
   subLabel?: string;
 }
 
-const CreateTaskForm = ({
+const TaskForm = ({
+  formData,
   setFormData,
-  errorMessages,
-  setErrorMsg,
   members,
-}: CreateTaskFormProps) => {
-  const [name, setName] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [status, setStatus] = useState<Status>("ToDo");
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+  errorMsg,
+  clearFieldError,
+}: TaskFormProps) => {
+  const [name, setName] = useState<string>(formData.name);
+  const [description, setDescription] = useState<string>(formData.description);
+  const [status, setStatus] = useState<Status>(formData.status);
+  const [startDate, setStartDate] = useState<Date | null>(
+    formData.startDate === "" ? null : new Date(formData.startDate)
+  );
+  const [endDate, setEndDate] = useState<Date | null>(
+    formData.endDate === "" ? null : new Date(formData.endDate)
+  );
   const [searchValue, setSearchValue] = useState("");
-  const [selectedMembers, setSelectedMembers] = useState<Member[]>([]);
+  const [selectedMembers, setSelectedMembers] = useState<Member[]>(
+    formData.managers
+  );
+
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
   const statusOptions: Option[] = [
@@ -94,7 +103,7 @@ const CreateTaskForm = ({
   };
 
   const handleChangeName = (value: string) => {
-    setErrorMsg((prev) => ({ ...prev, name: "" }));
+    clearFieldError("name");
     setName(value);
     setFormData((prev) => ({ ...prev, name: value }));
   };
@@ -111,7 +120,7 @@ const CreateTaskForm = ({
 
   const handleChangeStartDate = (date: Date | null) => {
     setStartDate(date);
-    setErrorMsg((prev) => ({ ...prev, date: "" }));
+    clearFieldError("date");
     if (date) {
       setFormData((prev) => ({
         ...prev,
@@ -145,7 +154,7 @@ const CreateTaskForm = ({
   };
 
   return (
-    <form className="flex flex-col w-[800px] p-8">
+    <form className="flex flex-col w-[800px] pt-6 pr-5 pb-0 pl-5">
       <div className="grid grid-cols-[2fr,1fr] gap-8">
         {/* 왼쪽 영역 */}
         <div className="space-y-8 border-r border-gray-200 pr-8">
@@ -156,7 +165,7 @@ const CreateTaskForm = ({
             <TextField
               value={name}
               onChange={handleChangeName}
-              errorMessage={errorMessages["name"]}
+              errorMessage={errorMsg["name"]}
               placeholder="제목을 입력하세요"
             />
           </div>
@@ -167,7 +176,7 @@ const CreateTaskForm = ({
               value={description}
               onChange={handleChangeDescription}
               placeholder="설명을 입력하세요"
-              className="min-h-[200px] w-full overflow-y-auto"
+              className="min-h-[100px] w-full overflow-y-auto"
             />
           </div>
 
@@ -181,7 +190,7 @@ const CreateTaskForm = ({
                 endDate={endDate}
                 onChangeStart={handleChangeStartDate}
                 onChangeEnd={handleChangeEndDate}
-                errorMessage={errorMessages["date"]}
+                errorMessage={errorMsg["date"]}
                 isOpen={isDatePickerOpen}
                 onOpenChange={setIsDatePickerOpen}
               />
@@ -254,4 +263,4 @@ const CreateTaskForm = ({
   );
 };
 
-export default CreateTaskForm;
+export default TaskForm;

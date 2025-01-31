@@ -1,18 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Task, { Status, statusNames } from "@models/Task";
 import Board from "@components/kanbanBoard/Board";
 import TaskCardDragProvider from "@/context/TaskCardDragContext";
 import Header from "@components/Header";
 import Modal from "@components/common/Modal";
-import CreateTaskForm, {
-  ErrorMessage,
-  FormData,
-} from "@components/kanbanBoard/CreateTaskForm";
+import TaskForm, { FormData } from "@/components/kanbanBoard/TaskForm";
 import { useProjectData } from "@/hooks/project/useProjectMutation";
 import { useTaskMutations } from "@/hooks/task/useTaskMutation";
+import { useTaskValidation } from "@/hooks/task/useTaskValidation";
+import { useProjectStore } from "@/store/useProjectStore";
 
 const KanbanBoardPage = () => {
-  const { data: project } = useProjectData();
+  const { projectId } = useProjectStore();
+  const { data: project } = useProjectData(projectId);
   if (project == null) {
     return null;
   }
@@ -28,52 +28,18 @@ const KanbanBoardPage = () => {
     endDate: "",
   };
   const [formData, setFormData] = useState<FormData>(initialFormData);
-  const [errorMsg, setErrorMsg] = useState<ErrorMessage>({});
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const { errorMsg, resetErrors, validationCheck, clearFieldError } =
+    useTaskValidation();
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setFormData(initialFormData);
-    setErrorMsg({});
-  };
-
-  const validationCheck = () => {
-    const { name, startDate, endDate } = formData;
-    let hasError = false;
-    if (!name || name.trim() === "") {
-      setErrorMsg((prev) => ({
-        ...prev,
-        ["name"]: "제목을 입력해주세요",
-      }));
-      hasError = true;
-    }
-
-    let dateErrorMsg = "";
-    if (!startDate || startDate.trim() === "") {
-      dateErrorMsg += "시작일";
-    }
-    if (!endDate || endDate.trim() === "") {
-      if (dateErrorMsg !== "") {
-        dateErrorMsg += "/마감일을 선택해주세요";
-      } else {
-        dateErrorMsg += "마감일을 선택해주세요";
-      }
-    }
-    if (dateErrorMsg !== "") {
-      setErrorMsg((prev) => ({
-        ...prev,
-        ["date"]: dateErrorMsg,
-      }));
-      hasError = true;
-    }
-
-    if (hasError) return false;
-
-    return true;
+    resetErrors();
   };
 
   const handleCreateTask = () => {
-    if (validationCheck()) {
+    if (validationCheck(formData)) {
       const newTask: Task = {
         id: "",
         projectId: project.id,
@@ -114,11 +80,12 @@ const KanbanBoardPage = () => {
         buttonLabel={"생성"}
         onClick={handleCreateTask}
       >
-        <CreateTaskForm
+        <TaskForm
+          formData={formData}
           setFormData={setFormData}
-          errorMessages={errorMsg}
-          setErrorMsg={setErrorMsg}
           members={project.members}
+          errorMsg={errorMsg}
+          clearFieldError={clearFieldError}
         />
       </Modal>
     </div>
