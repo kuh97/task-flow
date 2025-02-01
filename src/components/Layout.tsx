@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useParams } from "react-router-dom";
 import LeftToolPane from "@components/LeftToolPane";
 import { useProjectData } from "@/hooks/project/useProjectMutation";
 import LoadingComponent from "@components/common/LoadingComponent";
@@ -8,9 +8,20 @@ import {
 } from "@/context/TaskSelectContext";
 import RightToolPane from "./RightToolPane";
 import Project from "@/models/Project";
+import { useProjectStore } from "@/store/useProjectStore";
+import { useEffect } from "react";
 
 const Layout = () => {
-  const { data: project, isLoading } = useProjectData();
+  const { id } = useParams<{ id: string }>();
+  const { projectId, setProjectId } = useProjectStore();
+
+  useEffect(() => {
+    if (id && id !== projectId) {
+      setProjectId(id);
+    }
+  }, [id, projectId, setProjectId]);
+
+  const { data: project, isLoading } = useProjectData(id ?? "");
 
   if (isLoading) {
     return <LoadingComponent />;
