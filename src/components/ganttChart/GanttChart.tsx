@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { differenceInDays } from "date-fns";
+import { differenceInDays, isBefore, isAfter } from "date-fns";
 import Task, { Status } from "@models/Task";
 import gantt from "dhtmlx-gantt";
 import "dhtmlx-gantt/codebase/dhtmlxgantt.css";
@@ -36,7 +36,9 @@ const scaleOptions = [
 const GanttChart = ({ tasks }: GanttChartProps) => {
   const [scale, setScale] = useState<string>("month");
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [isEditModalOpen, setEditModalOpen] = useState<boolean>(false);
+  const [isUpdateBlockModalOpen, setUpdateBlockModalOpen] =
+    useState<boolean>(false);
 
   const initialFormData = {
     name: "",
@@ -48,6 +50,9 @@ const GanttChart = ({ tasks }: GanttChartProps) => {
   };
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [flattenedTasks, setFlattenedTasks] = useState<GanttChartTask[]>([]);
+  const newStartDateRef = useRef<string | null>(null);
+  const newEndDateRef = useRef<string | null>(null);
+
   const { errorMsg, validationCheck, clearFieldError } = useTaskValidation();
 
   const ganttContainer = useRef<HTMLDivElement>(null);
@@ -90,6 +95,16 @@ const GanttChart = ({ tasks }: GanttChartProps) => {
       const targetTask = flattened.find((task) => task.id === id);
       setSelectedTaskId(id);
       if (targetTask) {
+        let pStartDate, pEndDate;
+        if (targetTask?.parent) {
+          const parentTask = flattened.find(
+            (task) => task.id === targetTask.parent
+          );
+          if (parentTask) {
+            pStartDate = parentTask.startDate;
+            pEndDate = parentTask.endDate;
+          }
+        }
         const targetFormData: FormData = {
           name: targetTask.name,
           description: targetTask.description,
@@ -97,14 +112,81 @@ const GanttChart = ({ tasks }: GanttChartProps) => {
           managers: targetTask.managers,
           startDate: targetTask.startDate,
           endDate: targetTask.endDate,
+          parentStartDate: pStartDate,
+          parentEndDate: pEndDate,
         };
         setFormData(targetFormData);
-        setModalOpen(true);
+        setEditModalOpen(true);
       }
 
       // 기본 다이얼로그를 비활성화
       return false;
     });
+
+    // 드래그 이벤트 등록
+    gantt.attachEvent(
+      "onTaskDrag",
+      function (id: string, mode: string, task: any) {
+        const targetTask = flattened.find((task) => task.id === id);
+        if (targetTask?.parent) {
+          const parentTask = flattened.find(
+            (task) => task.id === targetTask.parent
+          );
+          if (parentTask) {
+            if (
+              isBefore(
+                new Date(task.start_date),
+                new Date(parentTask.startDate)
+              )
+            ) {
+              // 부모 Task 시작일보다 빠를 때
+              newStartDateRef.current = null;
+              return false;
+            }
+            if (
+              isAfter(new Date(task.end_date), new Date(parentTask.endDate))
+            ) {
+              // 부모 Task 마감일보다 느릴 때
+              newEndDateRef.current = null;
+              return false;
+            }
+          }
+        }
+        newStartDateRef.current = task.start_date;
+        newEndDateRef.current = task.end_date;
+      }
+    );
+
+    // 드래그 종료 시 update
+    gantt.attachEvent(
+      "onAfterTaskDrag",
+      function (id: string, mode: string, e: Event) {
+        if (newStartDateRef.current == null || newEndDateRef.current == null) {
+          setUpdateBlockModalOpen(true);
+          return false;
+        }
+        const targetTask = flattened.find((task) => task.id === id);
+        const formattedStartDate = new Date(
+          newStartDateRef.current ?? ""
+        ).toISOString();
+        const formattedEndDate = new Date(
+          newEndDateRef.current ?? ""
+        ).toISOString();
+
+        if (targetTask) {
+          updateTask({
+            id: targetTask.id,
+            name: targetTask.name,
+            description: targetTask.description,
+            status: targetTask.status,
+            managers: targetTask.managers,
+            startDate: formattedStartDate,
+            endDate: formattedEndDate,
+            parentTaskId: targetTask.parent ?? "",
+          });
+        }
+      }
+    );
 
     return () => {
       gantt.clearAll();
@@ -140,7 +222,7 @@ const GanttChart = ({ tasks }: GanttChartProps) => {
 
   const { updateTask } = useTaskMutations({
     projectId,
-    onSuccess: () => setModalOpen(false),
+    onSuccess: () => setEditModalOpen(false),
   });
 
   const handleUpdateTask = () => {
@@ -176,8 +258,8 @@ const GanttChart = ({ tasks }: GanttChartProps) => {
       <div ref={ganttContainer} className="w-full h-full" />
       <Modal
         title={"작업 수정"}
-        isOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
+        isOpen={isEditModalOpen}
+        onClose={() => setEditModalOpen(false)}
         buttonLabel={"저장"}
         onClick={handleUpdateTask}
       >
@@ -188,6 +270,20 @@ const GanttChart = ({ tasks }: GanttChartProps) => {
           errorMsg={errorMsg}
           clearFieldError={clearFieldError}
         />
+      </Modal>
+      <Modal
+        title="기간 변경 불가"
+        isOpen={isUpdateBlockModalOpen}
+        onClose={() => setUpdateBlockModalOpen(false)}
+        buttonLabel="확인"
+        onClick={() => setUpdateBlockModalOpen(false)}
+        className="bg-opacity-20"
+      >
+        <p className="my-4 whitespace-pre-line">
+          {
+            "이 날짜는 부모 작업의 기간을 초과합니다.\n부모 작업의 날짜를 수정한 후 다시 시도해 주세요."
+          }
+        </p>
       </Modal>
     </div>
   );
