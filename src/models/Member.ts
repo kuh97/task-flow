@@ -3,4 +3,5 @@ export default interface Member {
   email: string;
   nickname: string;
   isActive: boolean;
+  profileImage: string;
 }

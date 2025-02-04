@@ -15,6 +15,8 @@ export interface FormData {
   managers: Member[];
   startDate: string;
   endDate: string;
+  parentStartDate?: string;
+  parentEndDate?: string;
 }
 
 export interface ErrorMessage {
@@ -193,6 +195,16 @@ const TaskForm = ({
                 errorMessage={errorMsg["date"]}
                 isOpen={isDatePickerOpen}
                 onOpenChange={setIsDatePickerOpen}
+                minDate={
+                  formData.parentStartDate
+                    ? new Date(formData.parentStartDate)
+                    : undefined
+                }
+                maxDate={
+                  formData.parentEndDate
+                    ? new Date(formData.parentEndDate)
+                    : undefined
+                }
               />
             </div>
 

@@ -379,6 +379,16 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
                   <CustomRangeDatePicker
                     startDate={startDate}
                     endDate={endDate}
+                    minDate={
+                      isSubTask && parentTask
+                        ? new Date(parentTask?.startDate)
+                        : undefined
+                    }
+                    maxDate={
+                      isSubTask && parentTask
+                        ? new Date(parentTask?.endDate)
+                        : undefined
+                    }
                     onChangeStart={handleChangeStartDate}
                     onChangeEnd={handleChangeEndDate}
                     errorMessage={errorMsg}
