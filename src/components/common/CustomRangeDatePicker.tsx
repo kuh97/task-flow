@@ -15,6 +15,8 @@ interface CustomRangeDatePickerProps {
   isOpen?: boolean;
   onOpenChange?: (isOpen: boolean) => void;
   mustSelectFullRange?: boolean;
+  minDate?: Date | undefined;
+  maxDate?: Date | undefined;
 }
 
 const CustomRangeDatePicker = ({
@@ -27,6 +29,8 @@ const CustomRangeDatePicker = ({
   isOpen = false,
   onOpenChange,
   mustSelectFullRange = false,
+  minDate,
+  maxDate,
 }: CustomRangeDatePickerProps) => {
   const handleDateChange = (dates: [Date | null, Date | null]) => {
     if (dates) {
@@ -57,6 +61,8 @@ const CustomRangeDatePicker = ({
         onChange={handleDateChange}
         startDate={startDate || undefined}
         endDate={endDate || undefined}
+        minDate={minDate}
+        maxDate={maxDate}
         dateFormat="yyyy.MM.dd"
         placeholderText="날짜를 선택하세요"
         popperPlacement="bottom"
