@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Icon from "@/components/common/icon/Icon";
 import Project from "@models/Project";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface Menu {
   id: number;
@@ -23,7 +23,22 @@ interface LeftToolPaneProps {
 
 const LeftToolPane = ({ project }: LeftToolPaneProps) => {
   const navigate = useNavigate();
-  const [selectedTool, setSelectedTool] = useState<number | null>(2);
+  const location = useLocation();
+  const [selectedTool, setSelectedTool] = useState<number | null>(null);
+
+  useEffect(() => {
+    // URL 경로에 따라 초기 선택 메뉴 설정
+    const path = location.pathname;
+    if (path === "/") {
+      setSelectedTool(1);
+    } else if (path.includes("/kanban")) {
+      setSelectedTool(2);
+    } else if (path.includes("/gantt")) {
+      setSelectedTool(3);
+    } else if (path.includes("/members")) {
+      setSelectedTool(4);
+    }
+  }, [location.pathname]);
 
   const handleMenuClick = (menuId: number) => {
     setSelectedTool(menuId);
