@@ -1,5 +1,4 @@
-import { GRAPHQL_ENDPOINT } from "@/config/graphql";
-import { GraphQLClient } from "graphql-request";
+import client from "./graphqlClient";
 import {
   CREATE_PROJECT,
   GET_PROJECT_BY_ID,
@@ -7,8 +6,6 @@ import {
 } from "@queries/projectQueries";
 import Project, { ProjectBasic } from "@models/Project";
 import { convertProjectDates } from "@/utils/convertDateFormat";
-
-const client = new GraphQLClient(GRAPHQL_ENDPOINT);
 
 interface GetProjectByIdResponse {
   getProjectById: Project;

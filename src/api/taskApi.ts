@@ -1,5 +1,4 @@
-import { GRAPHQL_ENDPOINT } from "@/config/graphql";
-import { GraphQLClient } from "graphql-request";
+import client from "./graphqlClient";
 import {
   UPDATE_TASK_MUTATION,
   CREATE_TASK,
@@ -8,8 +7,6 @@ import {
   DELETE_SUBTASK,
 } from "@queries/taskQueries";
 import Task from "@models/Task";
-
-const client = new GraphQLClient(GRAPHQL_ENDPOINT);
 
 /**
  * Task update api
