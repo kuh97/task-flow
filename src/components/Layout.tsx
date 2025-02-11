@@ -7,6 +7,7 @@ import {
   useTaskSelectContext,
 } from "@/context/TaskSelectContext";
 import RightToolPane from "./RightToolPane";
+import StatusBar from "@components/StatusBar";
 import Project from "@/models/Project";
 import { useProjectStore } from "@/store/useProjectStore";
 import { useEffect } from "react";
@@ -86,6 +87,7 @@ const LayoutContent = ({
         </div>
       )}
       <div className={`h-screen ${project ? "ml-[5px]" : ""}`}>
+        <StatusBar />
         <Outlet />
       </div>
       {project && renderRightToolPane(project.id)}

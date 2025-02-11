@@ -1,7 +1,13 @@
+import Member from "@/models/Member";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 
+export interface GoogleLoginResponse {
+  accessToken: string;
+  member: Member;
+}
+
 interface GoogleLoginButtonProps {
-  onSuccess?: (token: string) => void;
+  onSuccess?: (data: GoogleLoginResponse) => void;
 }
 const GoogleLoginButton = ({ onSuccess }: GoogleLoginButtonProps) => {
   const handleLoginSuccess = (credentialResponse: CredentialResponse) => {
@@ -35,7 +41,7 @@ const GoogleLoginButton = ({ onSuccess }: GoogleLoginButtonProps) => {
       .then((data) => {
         console.log("✅ GraphQL 로그인 성공:", data);
         if (onSuccess) {
-          onSuccess(accessToken!);
+          onSuccess(data.data.googleLogin as GoogleLoginResponse);
         }
       })
       .catch((error) => console.error("❌ GraphQL 로그인 실패:", error));
