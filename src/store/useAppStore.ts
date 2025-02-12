@@ -14,7 +14,7 @@ export const useAppStore = create<AppStore>()(
       setLoginMember: (member) => set({ loginMember: member }),
     }),
     {
-      name: "auth-storage",
+      name: "app-storage",
       storage: createJSONStorage(() => sessionStorage),
     }
   )

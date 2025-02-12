@@ -8,6 +8,7 @@ import {
 } from "@/context/TaskSelectContext";
 import RightToolPane from "./RightToolPane";
 import StatusBar from "@components/StatusBar";
+import Main from "@components/Main";
 import Project from "@/models/Project";
 import { useProjectStore } from "@/store/useProjectStore";
 import { useEffect } from "react";
@@ -80,16 +81,16 @@ const LayoutContent = ({
   };
 
   return (
-    <div className="relative">
+    <div className="flex w-full relative">
       {project && (
-        <div className="w-64 border-r border-gray-200 bg-gray-50">
+        <div className="flex w-64 border-r border-gray-200 bg-gray-50">
           <LeftToolPane project={project} />
         </div>
       )}
-      <div className={`h-screen ${project ? "ml-[5px]" : ""}`}>
+      <Main>
         <StatusBar />
         <Outlet />
-      </div>
+      </Main>
       {project && renderRightToolPane(project.id)}
     </div>
   );
