@@ -60,7 +60,7 @@ const KanbanBoardPage = () => {
   };
 
   return (
-    <div className="flex flex-col ml-[250px] p-5 px-12 border-box h-full">
+    <div className="flex flex-col p-5 px-12 border-box h-full">
       <Header
         title="칸반 보드"
         buttonLabel="작업 추가"

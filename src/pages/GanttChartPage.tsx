@@ -8,7 +8,7 @@ const GanttChartPage = () => {
   const { data: project } = useProjectData(projectId);
 
   return (
-    <div className="flex flex-col ml-[250px] p-5 px-12 border-box h-full">
+    <div className="flex flex-col p-5 px-12 border-box h-full">
       <Header title="간트 차트" />
       <GanttChart tasks={project!.tasks} />
     </div>

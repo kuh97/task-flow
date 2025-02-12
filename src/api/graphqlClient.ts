@@ -5,7 +5,7 @@ import { useAuthStore } from "@/store/authStore";
 
 const SECRET_KEY = import.meta.env.VITE_JWT_SECRET;
 const SESSION_KEY = "encryptedAuth";
-const STORE_SESSION_KEY = "auth-storage";
+const APP_SESSION_KEY = "app-storage";
 
 const client = new GraphQLClient(GRAPHQL_ENDPOINT);
 
@@ -51,7 +51,7 @@ export const getAuthToken = () => {
 // 토큰 삭제
 export const removeAuthToken = () => {
   sessionStorage.removeItem(SESSION_KEY);
-  sessionStorage.removeItem(STORE_SESSION_KEY);
+  sessionStorage.removeItem(APP_SESSION_KEY);
   client.setHeader("Authorization", "");
 };
 
