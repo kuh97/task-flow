@@ -88,7 +88,7 @@ const LayoutContent = ({
         </div>
       )}
       <Main>
-        <StatusBar />
+        {project && <StatusBar projectName={project.name} hideLogo />}
         <Outlet />
       </Main>
       {project && renderRightToolPane(project.id)}

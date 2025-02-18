@@ -5,6 +5,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Pretendard", "sans-serif"],
+        logo: ["Montserrat Alternates", "sans-serif"], // 로고용 폰트 추가
       },
       colors: {
         primary: {

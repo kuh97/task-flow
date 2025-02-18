@@ -20,7 +20,31 @@ const LoginPage: React.FC = () => {
 
   return (
     <GoogleOAuthProvider clientId={googleOauthClientId}>
-      <GoogleLoginButton onSuccess={handleLoginSuccess} />
+      <div className="flex justify-center items-center bg-[#e0e4ff] w-full h-screen">
+        <div className="flex flex-col p-8 box-border w-[400px] h-[450px] rounded-lg bg-white shadow-lg">
+          <header>
+            <h3 className="flex items-center gap-2 font-bold text-xl font-logo">
+              <img
+                src="/public/taskflow.svg"
+                alt="taskflow-logo"
+                width={35}
+                height={35}
+              />
+              TaskFlow
+            </h3>
+          </header>
+          <div className="flex flex-col flex-1">
+            <h1 className="py-10 font-semibold text-3xl leading-relaxed">
+              {`작업을`}
+              <br />
+              {`관리하러 가볼까요?`}
+            </h1>
+            <div className="mt-auto mb-2">
+              <GoogleLoginButton onSuccess={handleLoginSuccess} />
+            </div>
+          </div>
+        </div>
+      </div>
     </GoogleOAuthProvider>
   );
 };
