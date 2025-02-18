@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Icon from "@/components/common/icon/Icon";
 import Project from "@models/Project";
 import { useLocation, useNavigate } from "react-router-dom";
+import Logo from "./common/Logo";
 
 interface Menu {
   id: number;
@@ -60,10 +61,10 @@ const LeftToolPane = ({ project }: LeftToolPaneProps) => {
 
   return (
     <div className="fixed left-0 top-0 w-64 h-screen bg-white border-r">
+      <div className="px-5 py-2">
+        <Logo />
+      </div>
       <div className="p-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold">{project.name}</h1>
-        </div>
         <div className="space-y-3">
           {menus.map((menu) => (
             <button
