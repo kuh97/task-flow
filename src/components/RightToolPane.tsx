@@ -369,6 +369,7 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
                     options={statusOptions}
                     onChange={handleChangeStatus}
                     placeholder="상태를 선택하세요"
+                    className="mt-2"
                   />
                 </div>
               </div>

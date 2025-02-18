@@ -22,13 +22,19 @@ export const GET_MEMBERS = gql`
   }
 `;
 
-export const CREATE_MEMBER_MUTATION = gql`
+export const CREATE_MEMBER = gql`
   mutation CreateMember(
     $email: String!
     $nickname: String!
     $isActive: Boolean
+    $projectId: ID!
   ) {
-    createMember(email: $email, nickname: $nickname, isActive: $isActive) {
+    createMember(
+      email: $email
+      nickname: $nickname
+      isActive: $isActive
+      projectId: $projectId
+    ) {
       id
       email
       nickname
@@ -37,7 +43,7 @@ export const CREATE_MEMBER_MUTATION = gql`
   }
 `;
 
-export const UPDATE_MEMBER_MUTATION = gql`
+export const UPDATE_MEMBER = gql`
   mutation UpdateMember(
     $id: ID!
     $email: String
@@ -58,7 +64,7 @@ export const UPDATE_MEMBER_MUTATION = gql`
   }
 `;
 
-export const DELETE_MEMBER_MUTATION = gql`
+export const DELETE_MEMBER = gql`
   mutation DeleteMember($id: ID!) {
     deleteMember(id: $id) {
       id

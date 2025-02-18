@@ -18,9 +18,9 @@ const TextField = ({
   readOnly = false,
 }: TextFieldProps) => {
   return (
-    <>
+    <div className="relative w-full">
       <input
-        className={`w-full h-10 p-2 mt-2 text-sm font-normal text-gray-900 
+        className={`w-full h-10 p-2 mt-2 text-sm font-normal text-gray-900
           border-[1.5px] ${errorMessage ? "border-red-400" : "border-gray-300"} rounded-md 
           hover:border-gray-400 focus:outline-none focus:border-indigo-600
           ${className}`}
@@ -32,9 +32,11 @@ const TextField = ({
         readOnly={readOnly}
       />
       {errorMessage && (
-        <span className="text-xs text-red-600">{errorMessage}</span>
+        <span className="absolute left-0 top-full text-xs text-red-600">
+          {errorMessage}
+        </span>
       )}
-    </>
+    </div>
   );
 };
 

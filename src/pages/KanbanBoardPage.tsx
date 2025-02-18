@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Task, { Status, statusNames } from "@models/Task";
 import Board from "@components/kanbanBoard/Board";
 import TaskCardDragProvider from "@/context/TaskCardDragContext";
