@@ -1,6 +1,7 @@
 import Dropdown, { Option } from "@/components/common/Dropdown";
 import Icon from "../common/icon/Icon";
 import Member from "@/models/Member";
+import { useAppStore } from "@/store/useAppStore";
 
 interface MemberListProps {
   members: Member[];
@@ -13,6 +14,7 @@ const MemberList = ({
   onPermissionChange,
   onDeleteMember,
 }: MemberListProps) => {
+  const { loginMember } = useAppStore();
   const ACCESS_OPTIONS: Option[] = [
     { label: "모든 권한", value: "ALL" },
     { label: "댓글 권한", value: "READ_AND_COMMENT" },
@@ -52,8 +54,7 @@ const MemberList = ({
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-medium">
-                  {member.nickname}{" "}
-                  {member.email === "dmlgus911@gmail.com" && "(나)"}
+                  {member.nickname} {member.id === loginMember?.id && "(나)"}
                 </span>
                 <span className="text-amber-600 text-sm">
                   {getRoleDisplay(member.role?.name)}
@@ -63,7 +64,7 @@ const MemberList = ({
             </div>
           </div>
           <div className="flex items-center gap-3">
-            {member.email !== "dmlgus911@gmail.com" && (
+            {member.id !== loginMember?.id && (
               <>
                 <div className="w-40">
                   <Dropdown
