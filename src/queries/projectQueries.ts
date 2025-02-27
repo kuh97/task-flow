@@ -32,6 +32,10 @@ export const GET_PROJECT_BY_ID = gql`
         progress
         managers {
           id
+          email
+          nickname
+          isActive
+          profileImage
         }
         subTasks {
           id
@@ -43,6 +47,10 @@ export const GET_PROJECT_BY_ID = gql`
           endDate
           managers {
             id
+            email
+            nickname
+            isActive
+            profileImage
           }
         }
       }

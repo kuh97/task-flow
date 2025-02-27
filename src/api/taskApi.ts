@@ -7,6 +7,7 @@ import {
   DELETE_SUBTASK,
 } from "@queries/taskQueries";
 import Task from "@models/Task";
+import { TaskInput } from "@/hooks/task/useTaskMutation";
 
 /**
  * Task update api
@@ -30,7 +31,7 @@ export const updateTask = async (
  * Task create api
  */
 export const createTask = async (
-  newTask: Task
+  newTask: TaskInput
 ): Promise<{ createTask: Task }> => {
   const variables = {
     projectId: newTask.projectId,

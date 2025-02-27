@@ -6,12 +6,25 @@ import {
   deleteTask,
   deleteSubTask,
 } from "@/api/taskApi";
-import Task from "@/models/Task";
+import Task, { Status } from "@/models/Task";
 import Project from "@/models/Project";
 
 interface UseTaskMutationProps {
   projectId: string;
   onSuccess?: () => void;
+}
+
+export interface TaskInput {
+  id?: string; // Optional, for update
+  projectId: string;
+  name: string;
+  description: string;
+  status: Status;
+  managers: string[];
+  startDate: string;
+  endDate: string;
+  progress: number;
+  priority?: boolean;
 }
 
 export const useTaskMutations = ({
@@ -78,7 +91,11 @@ export const useTaskMutations = ({
     },
   });
 
-  const createTaskMutation = useMutation<{ createTask: Task }, Error, Task>({
+  const createTaskMutation = useMutation<
+    { createTask: Task },
+    Error,
+    TaskInput
+  >({
     mutationFn: createTask,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["project"] });

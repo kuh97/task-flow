@@ -77,7 +77,10 @@ export const CREATE_TASK = gql`
       progress
       managers {
         id
+        email
         nickname
+        isActive
+        profileImage
       }
     }
   }
