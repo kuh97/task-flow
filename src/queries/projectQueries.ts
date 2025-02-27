@@ -14,6 +14,12 @@ export const GET_PROJECT_BY_ID = gql`
         email
         nickname
         isActive
+        profileImage
+        role {
+          id
+          name
+          permissions
+        }
       }
       tasks {
         id
@@ -105,6 +111,42 @@ export const DELETE_PROJECT = gql`
       id
       name
       description
+    }
+  }
+`;
+
+export const CREATE_MEMBER_FROM_PROJECT = gql`
+  mutation CreateMemberFromProject(
+    $email: String!
+    $name: String!
+    $permissions: [String]
+    $projectId: ID!
+  ) {
+    createMemberFromProject(
+      email: $email
+      name: $name
+      permissions: $permissions
+      projectId: $projectId
+    ) {
+      member {
+        id
+        email
+        nickname
+        profileImage
+      }
+      role {
+        id
+        name
+        permissions
+      }
+    }
+  }
+`;
+
+export const REMOVE_MEMBER_FROM_PROJECT = gql`
+  mutation RemoveMemberFromProject($projectId: ID!, $memberId: ID!) {
+    removeMemberFromProject(projectId: $projectId, memberId: $memberId) {
+      message
     }
   }
 `;

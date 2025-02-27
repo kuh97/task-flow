@@ -45,7 +45,7 @@ const Dropdown = ({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full h-10 px-3 mt-2 text-sm font-normal text-gray-900
+        className="w-full h-10 px-3 text-sm font-normal text-gray-900
           border-[1.5px] border-gray-300 rounded-md
           hover:border-gray-400 focus:outline-none focus:border-indigo-600
           bg-white flex items-center justify-between"
