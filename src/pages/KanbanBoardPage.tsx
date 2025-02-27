@@ -6,7 +6,7 @@ import Header from "@components/Header";
 import Modal from "@components/common/Modal";
 import TaskForm, { FormData } from "@/components/kanbanBoard/TaskForm";
 import { useProjectData } from "@/hooks/project/useProjectMutation";
-import { useTaskMutations } from "@/hooks/task/useTaskMutation";
+import { TaskInput, useTaskMutations } from "@/hooks/task/useTaskMutation";
 import { useTaskValidation } from "@/hooks/task/useTaskValidation";
 import { useProjectStore } from "@/store/useProjectStore";
 
@@ -40,17 +40,16 @@ const KanbanBoardPage = () => {
 
   const handleCreateTask = () => {
     if (validationCheck(formData)) {
-      const newTask: Task = {
+      const newTask: TaskInput = {
         id: "",
         projectId: project.id,
         name: formData.name,
         description: formData.description ?? "",
         status: formData.status,
-        managers: formData.managers ?? [],
+        managers: formData.managers.map((member) => member.id) ?? [],
         startDate: formData.startDate ?? "",
         endDate: formData.endDate ?? "",
         progress: 0,
-        subTasks: [],
         priority: false,
       };
 
