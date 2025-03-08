@@ -5,6 +5,8 @@ import {
   CREATE_SUBTASK,
   DELETE_TASK,
   DELETE_SUBTASK,
+  ADD_MEMBER_TO_TASK,
+  REMOVE_MEMBER_FROM_TASK,
 } from "@queries/taskQueries";
 import Task from "@models/Task";
 import { TaskInput } from "@/hooks/task/useTaskMutation";
@@ -83,4 +85,28 @@ export const deleteSubTask = async (
   const variables = { parentTaskId, subTaskId };
 
   return client.request(DELETE_SUBTASK, variables);
+};
+
+/**
+ * addMemberToTask api
+ */
+export const addMemberToTask = async (
+  taskId: string,
+  memberId: string
+): Promise<{ addMemberToTask: Task }> => {
+  const variables = { taskId, memberId };
+
+  return client.request(ADD_MEMBER_TO_TASK, variables);
+};
+
+/**
+ * removeMemberToTask api
+ */
+export const removeMemberFromTask = async (
+  taskId: string,
+  memberId: string
+): Promise<{ removeMemberFromTask: Task }> => {
+  const variables = { taskId, memberId };
+
+  return client.request(REMOVE_MEMBER_FROM_TASK, variables);
 };
