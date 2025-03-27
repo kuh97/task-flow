@@ -4,6 +4,7 @@ interface SearchableItem {
   id: number | string;
   label: string;
   subLabel?: string;
+  profileImage?: string;
 }
 
 interface SearchableDropdownProps<T extends SearchableItem> {
@@ -14,6 +15,7 @@ interface SearchableDropdownProps<T extends SearchableItem> {
   placeholder?: string;
   errorMessage?: string;
   filterKeys?: (keyof T)[];
+  className?: string;
 }
 
 const SearchableDropdown = <T extends SearchableItem>({
@@ -24,6 +26,7 @@ const SearchableDropdown = <T extends SearchableItem>({
   placeholder = "선택하세요",
   errorMessage,
   filterKeys = ["label", "subLabel"],
+  className,
 }: SearchableDropdownProps<T>) => {
   const [isOpen, setIsOpen] = useState(false);
   const [filteredItems, setFilteredItems] = useState<T[]>([]);
@@ -49,10 +52,10 @@ const SearchableDropdown = <T extends SearchableItem>({
   };
 
   return (
-    <div className="relative h-[65px]" ref={dropdownRef}>
+    <div className={`relative ${className} w-full`} ref={dropdownRef}>
       <input
         ref={inputRef}
-        className={`w-full h-10 p-2 mt-2 text-sm font-normal text-gray-900 
+        className={`w-full h-10 p-2 text-sm font-normal text-gray-900 
             border-[1.5px] ${errorMessage ? "border-red-400" : "border-gray-300"} rounded-md 
             hover:border-gray-400 focus:outline-none focus:border-indigo-600 
             `}
@@ -81,9 +84,20 @@ const SearchableDropdown = <T extends SearchableItem>({
               }}
               className="w-full px-4 py-2 text-left hover:bg-indigo-50 flex items-center gap-2"
             >
-              <div className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full text-base">
-                {item.label.charAt(0)}
-              </div>
+              {item.profileImage && (
+                <img
+                  src={
+                    item.profileImage ||
+                    `https://ui-avatars.com/api/?name=${item.label}`
+                  }
+                  alt={item.label}
+                  className="w-8 h-8 rounded-full object-cover"
+                  onError={(e: any) => {
+                    e.target.onerror = null;
+                    e.target.src = `https://ui-avatars.com/api/?name=${item.label}`;
+                  }}
+                />
+              )}
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-gray-900">
                   {item.label}

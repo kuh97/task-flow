@@ -36,6 +36,7 @@ interface SearchableItem {
   id: number | string;
   label: string;
   subLabel?: string;
+  profileImage?: string;
 }
 
 const TaskForm = ({
@@ -75,6 +76,7 @@ const TaskForm = ({
     id: member.id,
     label: member.nickname,
     subLabel: member.email,
+    profileImage: member.profileImage,
   });
 
   const handleSelectMember = (item: SearchableItem) => {
@@ -236,6 +238,7 @@ const TaskForm = ({
               onSelect={handleSelectMember}
               items={availableMembers.map(mapMemberToSearchableItem)}
               placeholder="이름 및 이메일을 입력하세요"
+              className={"mt-2"}
             />
           </div>
 
@@ -247,9 +250,18 @@ const TaskForm = ({
                   className="flex items-center justify-between px-4 py-3 hover:bg-indigo-50 border-b last:border-b-0"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full text-sm">
-                      {member.nickname.charAt(0)}
-                    </div>
+                    <img
+                      src={
+                        member.profileImage ||
+                        `https://ui-avatars.com/api/?name=${member.nickname}`
+                      }
+                      alt={member.nickname}
+                      className="w-8 h-8 rounded-full object-cover"
+                      onError={(e: any) => {
+                        e.target.onerror = null;
+                        e.target.src = `https://ui-avatars.com/api/?name=${member.nickname}`;
+                      }}
+                    />
                     <div className="flex flex-col">
                       <span className="text-sm font-medium">
                         {member.nickname}

@@ -5,6 +5,8 @@ import {
   updateTask,
   deleteTask,
   deleteSubTask,
+  addMemberToTask,
+  removeMemberFromTask,
 } from "@/api/taskApi";
 import Task, { Status } from "@/models/Task";
 import Project from "@/models/Project";
@@ -241,11 +243,88 @@ export const useTaskMutations = ({
     },
   });
 
+  const addMemberToTaskMutation = useMutation<
+    { addMemberToTask: Task },
+    Error,
+    { taskId: string; memberId: string }
+  >({
+    mutationFn: ({ taskId, memberId }) => addMemberToTask(taskId, memberId),
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData<{ getProjectById: Project } | undefined>(
+        ["project", projectId],
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          const updatedTasks = oldData.getProjectById.tasks.map((task) => {
+            if (task.id === variables.taskId) {
+              return {
+                ...task,
+                managers: data.addMemberToTask.managers,
+              };
+            }
+            return task;
+          });
+
+          return {
+            ...oldData,
+            getProjectById: {
+              ...oldData.getProjectById,
+              tasks: updatedTasks,
+            },
+          };
+        }
+      );
+    },
+    onError: (error) => {
+      console.log("멤버 추가 실패", error);
+    },
+  });
+
+  const removeMemberFromTaskMutation = useMutation<
+    { removeMemberFromTask: Task },
+    Error,
+    { taskId: string; memberId: string }
+  >({
+    mutationFn: ({ taskId, memberId }) =>
+      removeMemberFromTask(taskId, memberId),
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData<{ getProjectById: Project } | undefined>(
+        ["project", projectId],
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          const updatedTasks = oldData.getProjectById.tasks.map((task) => {
+            if (task.id === variables.taskId) {
+              return {
+                ...task,
+                managers: data.removeMemberFromTask.managers,
+              };
+            }
+            return task;
+          });
+
+          return {
+            ...oldData,
+            getProjectById: {
+              ...oldData.getProjectById,
+              tasks: updatedTasks,
+            },
+          };
+        }
+      );
+    },
+    onError: (error) => {
+      console.error("멤버 제거 실패:", error);
+    },
+  });
+
   return {
     updateTask: updateTaskMutation.mutate,
     createTask: createTaskMutation.mutate,
     deleteTask: deleteTaskMutation.mutate,
     createSubTask: createSubTaskMutation.mutate,
     deleteSubTask: deleteSubTaskMutation.mutate,
+    addMemberToTask: addMemberToTaskMutation.mutate,
+    removeMemberFromTask: removeMemberFromTaskMutation.mutate,
   };
 };

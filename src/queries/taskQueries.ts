@@ -117,7 +117,10 @@ export const UPDATE_TASK_MUTATION = gql`
       progress
       managers {
         id
+        email
         nickname
+        isActive
+        profileImage
       }
     }
   }
@@ -158,6 +161,36 @@ export const DELETE_SUBTASK = gql`
       id
       subTasks {
         id
+      }
+    }
+  }
+`;
+
+export const ADD_MEMBER_TO_TASK = gql`
+  mutation AddMemberToTask($taskId: ID!, $memberId: ID!) {
+    addMemberToTask(taskId: $taskId, memberId: $memberId) {
+      id
+      managers {
+        id
+        email
+        nickname
+        isActive
+        profileImage
+      }
+    }
+  }
+`;
+
+export const REMOVE_MEMBER_FROM_TASK = gql`
+  mutation RemoveMemberFromTask($taskId: ID!, $memberId: ID!) {
+    removeMemberFromTask(taskId: $taskId, memberId: $memberId) {
+      id
+      managers {
+        id
+        email
+        nickname
+        isActive
+        profileImage
       }
     }
   }
