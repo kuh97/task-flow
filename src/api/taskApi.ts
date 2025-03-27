@@ -7,9 +7,11 @@ import {
   DELETE_SUBTASK,
   ADD_MEMBER_TO_TASK,
   REMOVE_MEMBER_FROM_TASK,
+  GET_TASK_BY_ID,
 } from "@queries/taskQueries";
 import Task from "@models/Task";
 import { TaskInput } from "@/hooks/task/useTaskMutation";
+import { convertTaskDates } from "@/utils/convertDateFormat";
 
 /**
  * Task update api
@@ -109,4 +111,28 @@ export const removeMemberFromTask = async (
   const variables = { taskId, memberId };
 
   return client.request(REMOVE_MEMBER_FROM_TASK, variables);
+};
+
+interface GetTaskByIdResponse {
+  getTaskById: Task;
+}
+
+/**
+ * task fetch by Id
+ * @returns Task
+ */
+export const fetchTaskById = async (id: string): Promise<Task> => {
+  const variables = {
+    id,
+  };
+  const response = await client.request<GetTaskByIdResponse>(
+    GET_TASK_BY_ID,
+    variables
+  );
+
+  if (response.getTaskById) {
+    response.getTaskById = convertTaskDates(response.getTaskById);
+  }
+
+  return response.getTaskById;
 };

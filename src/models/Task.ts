@@ -1,4 +1,5 @@
 import Member from "./Member";
+import TaskComment from "./TaskComment";
 
 export const statusNames = ["ToDo", "InProgress", "Done"] as const;
 
@@ -16,4 +17,5 @@ export default interface Task {
   progress: number; // 진행률
   subTasks: Task[]; // 하위작업들
   priority?: boolean; // 우선순위
+  comments: TaskComment[];
 }

@@ -40,11 +40,7 @@ const Layout = () => {
   );
 };
 
-const LayoutContent = ({
-  project,
-}: {
-  project: Project | null | undefined;
-}) => {
+const LayoutContent = ({ project }: { project: Project }) => {
   const {
     selectedTaskId,
     selectedSubTaskId,
@@ -91,7 +87,7 @@ const LayoutContent = ({
         {project && <StatusBar projectName={project.name} hideLogo />}
         <Outlet />
       </Main>
-      {project && renderRightToolPane(project.id)}
+      {selectedTaskId && renderRightToolPane(project.id)}
     </div>
   );
 };

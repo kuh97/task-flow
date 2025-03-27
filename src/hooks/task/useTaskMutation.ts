@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createSubTask,
   createTask,
@@ -7,6 +7,7 @@ import {
   deleteSubTask,
   addMemberToTask,
   removeMemberFromTask,
+  fetchTaskById,
 } from "@/api/taskApi";
 import Task, { Status } from "@/models/Task";
 import Project from "@/models/Project";
@@ -326,5 +327,23 @@ export const useTaskMutations = ({
     deleteSubTask: deleteSubTaskMutation.mutate,
     addMemberToTask: addMemberToTaskMutation.mutate,
     removeMemberFromTask: removeMemberFromTaskMutation.mutate,
+  };
+};
+
+export const useTaskData = (taskId: string) => {
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["task", taskId],
+    queryFn: async () => {
+      const taskData = await fetchTaskById(taskId!);
+      return taskData;
+    },
+    enabled: !!taskId, // id가 없을 경우 쿼리 실행 차단
+  });
+
+  return {
+    data: data ?? null,
+    isLoading,
+    isError,
+    error,
   };
 };

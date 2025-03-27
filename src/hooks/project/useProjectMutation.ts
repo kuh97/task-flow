@@ -4,10 +4,11 @@ import {
   removeMemberFromProject,
   createMemberFromProject,
   createProject,
-} from "@/api/projectApi";
-import Project, { ProjectBasic } from "@/models/Project";
-import Member from "@/models/Member";
-import Role from "@/models/Role";
+} from "@api/projectApi";
+import Project, { ProjectBasic } from "@models/Project";
+import Member from "@models/Member";
+import Role from "@models/Role";
+import Task from "@models/Task";
 import { useNavigate } from "react-router-dom";
 
 interface UseProjectMutationsProps {
@@ -99,9 +100,20 @@ export const useProjectMutations = ({
 };
 
 export const useProjectData = (projectId: string) => {
+  const queryClient = useQueryClient();
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["project", projectId],
-    queryFn: () => fetchProjectById(projectId!),
+    queryFn: async () => {
+      const projectData = await fetchProjectById(projectId!);
+      // 개별 Task 캐싱
+      projectData.getProjectById.tasks.forEach((task: Task) => {
+        if (task.id) {
+          queryClient.setQueryData(["task", task.id], task); // Task만 캐싱
+        }
+      });
+      return projectData;
+    },
     enabled: !!projectId, // id가 없을 경우 쿼리 실행 차단
   });
 

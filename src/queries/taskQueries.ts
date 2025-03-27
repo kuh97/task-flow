@@ -4,21 +4,71 @@ export const GET_TASK_BY_ID = gql`
   query GetTaskById($id: ID!) {
     getTaskById(id: $id) {
       id
+      projectId
       name
       description
       status
-      priority
-      progress
-      projectId
       startDate
       endDate
+      progress
       managers {
         id
+        email
         nickname
+        isActive
+        profileImage
       }
       subTasks {
         id
+        projectId
         name
+        description
+        status
+        startDate
+        endDate
+        managers {
+          id
+          email
+          nickname
+          isActive
+          profileImage
+        }
+        comments {
+          id
+          projectId
+          taskId
+          member {
+            id
+            email
+            nickname
+            isActive
+            profileImage
+          }
+          content
+          createdAt
+          updatedAt
+          expiredAt
+          likeCount
+          isClicked
+        }
+      }
+      comments {
+        id
+        projectId
+        taskId
+        member {
+          id
+          email
+          nickname
+          isActive
+          profileImage
+        }
+        content
+        createdAt
+        updatedAt
+        expiredAt
+        likeCount
+        isClicked
       }
     }
   }
