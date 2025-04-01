@@ -1,11 +1,5 @@
-import { useTaskSelectContext } from "@/context/TaskSelectContext";
-
-interface RightToolPaneProps {
-  projectId: string;
-  isSubTask?: boolean;
-}
-
 import { useEffect, useState } from "react";
+import { useTaskSelectContext } from "@/context/TaskSelectContext";
 import Icon from "@common/icon/Icon";
 import Dropdown, { Option } from "./common/Dropdown";
 import { Status } from "@/models/Task";
@@ -13,19 +7,24 @@ import CustomRangeDatePicker from "./common/CustomRangeDatePicker";
 import { format } from "date-fns";
 import TextArea from "./common/TextArea";
 import TextField from "./common/TextField";
-import { useProjectData } from "@/hooks/project/useProjectMutation";
-import { useTaskMutations } from "@/hooks/task/useTaskMutation";
+import { useTaskData, useTaskMutations } from "@/hooks/task/useTaskMutation";
 import KebabMenu from "./common/KebabMenu";
 import Modal from "./common/Modal";
 import { useProjectStore } from "@/store/useProjectStore";
 import SearchableDropdown from "./common/SearchableDropdown";
 import Member from "@/models/Member";
+import { useProjectData } from "@/hooks/project/useProjectMutation";
+import TaskTabs from "./kanbanBoard/TaskTabs";
 
 interface SearchableItem {
   id: number | string;
   label: string;
   subLabel?: string;
   profileImage?: string;
+}
+interface RightToolPaneProps {
+  projectId: string;
+  isSubTask?: boolean;
 }
 
 const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
@@ -35,12 +34,8 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
     selectedSubTaskId,
     setSelectedSubTaskId,
   } = useTaskSelectContext();
-  const { projectId } = useProjectStore();
-  const { data: project } = useProjectData(projectId);
-  if (project === null) {
-    return null;
-  }
 
+  const { projectId } = useProjectStore();
   const {
     updateTask,
     deleteTask,
@@ -48,9 +43,21 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
     deleteSubTask,
     addMemberToTask,
     removeMemberFromTask,
-  } = useTaskMutations({ projectId: project.id });
+  } = useTaskMutations({ projectId });
+  const { data: project, isLoading: isLoadingProject } =
+    useProjectData(projectId);
 
-  const parentTask = project.tasks.find((t) => t.id === selectedTaskId);
+  const { data: task, isLoading: isLoadingTask } = useTaskData(selectedTaskId!);
+
+  if (isLoadingProject || isLoadingTask) {
+    return <div>Loading...</div>; // 로딩 상태 처리
+  }
+
+  if (project == null || task == null) {
+    return null; // 데이터가 없으면 리턴
+  }
+
+  const parentTask = project.tasks.find((t) => t.id === task.id);
   const selectedTask = isSubTask
     ? parentTask?.subTasks.find((st) => st.id === selectedSubTaskId)
     : parentTask;
@@ -67,8 +74,6 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
     useState<boolean>(false);
   const [editDescription, setEditDescription] = useState<string>("");
 
-  const [isAddingSubTask, setIsAddingSubTask] = useState<boolean>(false);
-  const [newSubTaskTitle, setNewSubTaskTitle] = useState<string>("");
   const [isKebabMenuOpen, setIsKebabMenuOpen] = useState<boolean>(false);
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
@@ -105,7 +110,6 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
       setEndDate(new Date(selectedTask.endDate));
       setErrorMsg("");
       setIsDatePickerOpen(false);
-      setIsAddingSubTask(false);
       setIsKebabMenuOpen(false);
       setIsDeleteModalOpen(false);
       setIsAddingMember(false);
@@ -276,15 +280,7 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
     setEditDescription("");
   };
 
-  const handleAddSubTask = () => {
-    setIsAddingSubTask(true);
-  };
-
-  const handleChangeSubTaskTitle = (value: string) => {
-    setNewSubTaskTitle(value);
-  };
-
-  const handleSaveSubTask = () => {
+  const handleSaveSubTask = (newSubTaskTitle: string) => {
     if (project && selectedTask && newSubTaskTitle.trim()) {
       const newSubTask = {
         name: newSubTaskTitle,
@@ -293,25 +289,14 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
         startDate: selectedTask.startDate,
         endDate: selectedTask.endDate,
         progress: 0,
+        comments: [],
       };
 
       createSubTask({
         parentTaskId: selectedTask.id,
         subTask: newSubTask,
       });
-
-      setIsAddingSubTask(false);
-      setNewSubTaskTitle("");
     }
-  };
-
-  const handleSubTaskTitleOutsideClick = () => {
-    setIsAddingSubTask(false);
-    setNewSubTaskTitle("");
-  };
-
-  const handleSubTaskClick = (taskId: string) => {
-    setSelectedSubTaskId(taskId);
   };
 
   const handleAddMember = () => {
@@ -420,7 +405,7 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
           </div>
 
           <div className="flex-1 overflow-y-auto">
-            <div className="p-4 space-y-3 border-b">
+            <div className="p-4 space-y-3">
               <div className="flex items-center gap-3">
                 <div className="w-full">
                   <div className="text-sm text-gray-500">상태</div>
@@ -497,7 +482,6 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
                   </div>
                 </div>
               </div>
-
               {!isSubTask && (
                 <div className="flex items-center gap-2">
                   <div className="w-full">
@@ -565,78 +549,12 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
                   </div>
                 </div>
               )}
+              <TaskTabs
+                task={task}
+                isSubTask={isSubTask}
+                handleSaveSubTask={handleSaveSubTask}
+              />
             </div>
-
-            {!isSubTask && (
-              <div className="p-4">
-                <div className="flex items-center justify-between mb-1">
-                  <h3 className="text-sm text-gray-500">{`하위 작업 (${selectedTask.subTasks.length})`}</h3>
-                  <div className="flex gap-2">
-                    <button
-                      className="text-sm px-3 py-1 rounded border hover:bg-gray-50"
-                      onClick={handleAddSubTask}
-                    >
-                      + 추가
-                    </button>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  {isAddingSubTask && (
-                    <div
-                      className="flex-1 flex items-center gap-2 relative"
-                      onBlur={handleSubTaskTitleOutsideClick}
-                    >
-                      <TextField
-                        value={newSubTaskTitle}
-                        onChange={handleChangeSubTaskTitle}
-                        errorMessage={""}
-                        placeholder={"제목을 입력하세요"}
-                        className="!mt-0"
-                        autoFocus={true}
-                      />
-                      <div className="absolute right-0 top-[46px] flex gap-2 z-10">
-                        <button
-                          onMouseDown={handleSaveSubTask}
-                          className="p-2 hover:bg-gray-50 bg-white rounded border border-gray-200 shadow-[0_2px_4px_rgba(0,0,0,0.1)] transition-all duration-200"
-                        >
-                          <Icon name={"saveButton"} className={"w-5 h-5"} />
-                        </button>
-                        <button
-                          onMouseDown={handleSubTaskTitleOutsideClick}
-                          className="p-2 hover:bg-gray-50 bg-white rounded border border-gray-200 shadow-[0_2px_4px_rgba(0,0,0,0.1)] transition-all duration-200"
-                        >
-                          <Icon name={"deleteButton"} className={"w-5 h-5"} />
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {selectedTask.subTasks.map((task) => (
-                    <div
-                      key={`subtask-${task.id}`}
-                      className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-md border border-gray-200 cursor-pointer group"
-                      onClick={() => handleSubTaskClick(task.id)}
-                    >
-                      <div
-                        className={`w-2 h-2 rounded-full ${
-                          task.status === "Done"
-                            ? "bg-green-500"
-                            : task.status === "InProgress"
-                              ? "bg-blue-500"
-                              : "bg-gray-300"
-                        }`}
-                      />
-                      <span className="text-sm flex-1">{task.name}</span>
-                      <Icon
-                        name="rightArrow"
-                        className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

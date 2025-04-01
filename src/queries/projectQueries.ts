@@ -52,6 +52,42 @@ export const GET_PROJECT_BY_ID = gql`
             isActive
             profileImage
           }
+          comments {
+            id
+            projectId
+            taskId
+            member {
+              id
+              email
+              nickname
+              isActive
+              profileImage
+            }
+            content
+            createdAt
+            updatedAt
+            expiredAt
+            likeCount
+            isClicked
+          }
+        }
+        comments {
+          id
+          projectId
+          taskId
+          member {
+            id
+            email
+            nickname
+            isActive
+            profileImage
+          }
+          content
+          createdAt
+          updatedAt
+          expiredAt
+          likeCount
+          isClicked
         }
       }
     }
