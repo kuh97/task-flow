@@ -247,7 +247,7 @@ export const useTaskMutations = ({
   const addMemberToTaskMutation = useMutation<
     { addMemberToTask: Task },
     Error,
-    { taskId: string; memberId: string }
+    { taskId: string; memberId: string; parentTaskId?: string }
   >({
     mutationFn: ({ taskId, memberId }) => addMemberToTask(taskId, memberId),
     onSuccess: (data, variables) => {
@@ -256,12 +256,29 @@ export const useTaskMutations = ({
         (oldData) => {
           if (!oldData) return oldData;
 
+          const isSubTask = !!variables.parentTaskId;
+
           const updatedTasks = oldData.getProjectById.tasks.map((task) => {
-            if (task.id === variables.taskId) {
-              return {
-                ...task,
-                managers: data.addMemberToTask.managers,
-              };
+            if (isSubTask) {
+              // 하위 작업일 경우: 부모 작업 탐색
+              if (task.id === variables.parentTaskId) {
+                return {
+                  ...task,
+                  subTasks: task.subTasks.map((subTask) =>
+                    subTask.id === variables.taskId
+                      ? { ...subTask, managers: data.addMemberToTask.managers }
+                      : subTask
+                  ),
+                };
+              }
+            } else {
+              // 상위 작업일 경우: 직접 업데이트
+              if (task.id === variables.taskId) {
+                return {
+                  ...task,
+                  managers: data.addMemberToTask.managers,
+                };
+              }
             }
             return task;
           });
@@ -284,7 +301,7 @@ export const useTaskMutations = ({
   const removeMemberFromTaskMutation = useMutation<
     { removeMemberFromTask: Task },
     Error,
-    { taskId: string; memberId: string }
+    { taskId: string; memberId: string; parentTaskId?: string }
   >({
     mutationFn: ({ taskId, memberId }) =>
       removeMemberFromTask(taskId, memberId),
@@ -294,12 +311,32 @@ export const useTaskMutations = ({
         (oldData) => {
           if (!oldData) return oldData;
 
+          const isSubTask = !!variables.parentTaskId;
+
           const updatedTasks = oldData.getProjectById.tasks.map((task) => {
-            if (task.id === variables.taskId) {
-              return {
-                ...task,
-                managers: data.removeMemberFromTask.managers,
-              };
+            if (isSubTask) {
+              // 하위 작업일 경우: 부모 작업 탐색
+              if (task.id === variables.parentTaskId) {
+                return {
+                  ...task,
+                  subTasks: task.subTasks.map((subTask) =>
+                    subTask.id === variables.taskId
+                      ? {
+                          ...subTask,
+                          managers: data.removeMemberFromTask.managers,
+                        }
+                      : subTask
+                  ),
+                };
+              }
+            } else {
+              // 상위 작업일 경우: 직접 업데이트
+              if (task.id === variables.taskId) {
+                return {
+                  ...task,
+                  managers: data.removeMemberFromTask.managers,
+                };
+              }
             }
             return task;
           });
