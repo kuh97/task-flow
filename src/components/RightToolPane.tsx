@@ -81,10 +81,15 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
   const [isAddingMember, setIsAddingMember] = useState<boolean>(false);
   const [searchMemberValue, setSearchMemberValue] = useState("");
 
-  const availableMembers = project.members.filter(
-    (member) =>
-      !selectedTask?.managers.some((selected) => selected.id === member.id)
-  );
+  const availableMembers = isSubTask
+    ? parentTask?.managers.filter(
+        (member) =>
+          !selectedTask?.managers.some((selected) => selected.id === member.id)
+      ) || []
+    : project.members.filter(
+        (member) =>
+          !selectedTask?.managers.some((selected) => selected.id === member.id)
+      );
 
   const mapMemberToSearchableItem = (member: Member): SearchableItem => ({
     id: member.id,
@@ -99,6 +104,8 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
       addMemberToTask({
         taskId: selectedTask.id,
         memberId: member.id,
+        // 하위 작업일 경우 parentTaskId 추가
+        ...(isSubTask && { parentTaskId: parentTask?.id }),
       });
     }
     setIsAddingMember(false);
@@ -307,6 +314,8 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
       removeMemberFromTask({
         taskId: selectedTask.id,
         memberId: memberId,
+        // 하위 작업일 경우 parentTaskId 추가
+        ...(isSubTask && { parentTaskId: parentTask?.id }),
       });
     }
   };
@@ -481,73 +490,69 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
                   </div>
                 </div>
               </div>
-              {!isSubTask && (
-                <div className="flex items-center gap-2">
-                  <div className="w-full">
-                    <div className="flex items-center justify-between mb-1">
-                      <h3 className="text-sm text-gray-500">{`담당자 (${selectedTask.managers.length})`}</h3>
-                      <div className="flex gap-2">
-                        <button
-                          className="text-sm px-3 py-1 rounded border hover:bg-gray-50"
-                          onClick={handleAddMember}
-                        >
-                          + 추가
-                        </button>
-                      </div>
+              <div className="flex items-center gap-2">
+                <div className="w-full">
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className="text-sm text-gray-500">{`담당자 (${selectedTask.managers.length})`}</h3>
+                    <div className="flex gap-2">
+                      <button
+                        className="text-sm px-3 py-1 rounded border hover:bg-gray-50"
+                        onClick={handleAddMember}
+                      >
+                        + 추가
+                      </button>
                     </div>
-                    {isAddingMember && (
-                      <div className="flex gap-1 items-center mb-2">
-                        <SearchableDropdown<SearchableItem>
-                          value={searchMemberValue}
-                          onChange={setSearchMemberValue}
-                          onSelect={handleSelectMember}
-                          items={availableMembers.map(
-                            mapMemberToSearchableItem
-                          )}
-                          placeholder="이름 및 이메일을 입력하세요"
-                        />
-                        <button onClick={handleCloseMember}>
-                          <Icon name={"deleteButton"} className={"w-5 h-5"} />
-                        </button>
-                      </div>
-                    )}
+                  </div>
+                  {isAddingMember && (
+                    <div className="flex gap-1 items-center mb-2">
+                      <SearchableDropdown<SearchableItem>
+                        value={searchMemberValue}
+                        onChange={setSearchMemberValue}
+                        onSelect={handleSelectMember}
+                        items={availableMembers.map(mapMemberToSearchableItem)}
+                        placeholder="이름 및 이메일을 입력하세요"
+                      />
+                      <button onClick={handleCloseMember}>
+                        <Icon name={"deleteButton"} className={"w-5 h-5"} />
+                      </button>
+                    </div>
+                  )}
 
-                    <div className="h-[100px] overflow-y-scroll border-[1.5px] border-gray-300 rounded-md px-1 pb-1">
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {selectedTask.managers.map((manager) => (
-                          <div
-                            key={manager.id}
-                            className="bg-white text-gray-700 text-xs py-1 px-2 rounded-full flex items-center gap-2 border border-gray-300 hover:bg-indigo-100 transition-colors"
-                          >
-                            <div className="w-5 h-5 rounded-full overflow-hidden">
-                              <img
-                                src={
-                                  manager.profileImage ||
-                                  `https://ui-avatars.com/api/?name=${manager.nickname}`
-                                } // 이미지를 로드하지 못할 경우 기본 이미지 사용
-                                alt={manager.nickname}
-                                className="w-full h-full object-cover"
-                                onError={(e: any) => {
-                                  // 이미지 로드 실패 시 기본 이미지로 대체
-                                  e.target.onerror = null;
-                                  e.target.src = `https://ui-avatars.com/api/?name=${manager.nickname}`;
-                                }}
-                              />
-                            </div>
-                            {manager.nickname}
-                            <button
-                              onClick={() => handleRemoveMember(manager.id)}
-                              className="text-gray-400 hover:text-red-500 transition-colors"
-                            >
-                              ×
-                            </button>
+                  <div className="h-[100px] overflow-y-scroll border-[1.5px] border-gray-300 rounded-md px-1 pb-1">
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {selectedTask.managers.map((manager) => (
+                        <div
+                          key={manager.id}
+                          className="bg-white text-gray-700 text-xs py-1 px-2 rounded-full flex items-center gap-2 border border-gray-300 hover:bg-indigo-100 transition-colors"
+                        >
+                          <div className="w-5 h-5 rounded-full overflow-hidden">
+                            <img
+                              src={
+                                manager.profileImage ||
+                                `https://ui-avatars.com/api/?name=${manager.nickname}`
+                              } // 이미지를 로드하지 못할 경우 기본 이미지 사용
+                              alt={manager.nickname}
+                              className="w-full h-full object-cover"
+                              onError={(e: any) => {
+                                // 이미지 로드 실패 시 기본 이미지로 대체
+                                e.target.onerror = null;
+                                e.target.src = `https://ui-avatars.com/api/?name=${manager.nickname}`;
+                              }}
+                            />
                           </div>
-                        ))}
-                      </div>
+                          {manager.nickname}
+                          <button
+                            onClick={() => handleRemoveMember(manager.id)}
+                            className="text-gray-400 hover:text-red-500 transition-colors"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
               <TaskTabs
                 task={task}
                 isSubTask={isSubTask}
