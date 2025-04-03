@@ -67,7 +67,7 @@ export const deleteTask = async (
  */
 export const createSubTask = async (
   parentTaskId: string,
-  newSubTask: Omit<Task, "id" | "projectId" | "subTasks" | "managers">
+  newSubTask: Omit<TaskInput, "id" | "projectId" | "subTasks" | "managers">
 ): Promise<{ createSubTask: Task }> => {
   const variables = {
     parentTaskId,

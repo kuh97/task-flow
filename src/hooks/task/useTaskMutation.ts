@@ -155,7 +155,7 @@ export const useTaskMutations = ({
     Error,
     {
       parentTaskId: string;
-      subTask: Omit<Task, "id" | "projectId" | "subTasks" | "managers">;
+      subTask: Omit<TaskInput, "id" | "projectId" | "subTasks" | "managers">;
     }
   >({
     mutationFn: ({ parentTaskId, subTask }) =>

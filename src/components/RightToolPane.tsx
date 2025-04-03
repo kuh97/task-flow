@@ -289,7 +289,6 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
         startDate: selectedTask.startDate,
         endDate: selectedTask.endDate,
         progress: 0,
-        comments: [],
       };
 
       createSubTask({

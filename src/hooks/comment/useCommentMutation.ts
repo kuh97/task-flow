@@ -54,80 +54,88 @@ export const useCommentMutations = ({
       });
 
       // 낙관적 업데이트 적용
-      const previousTask =
-        queryClient.getQueryData<Task>([
-          "task",
-          parentTaskId ? parentTaskId : taskId,
-        ]) || undefined;
+      const previousTask = queryClient.getQueryData<Task>([
+        "task",
+        parentTaskId ? parentTaskId : taskId,
+      ]);
 
       if (previousTask) {
+        let updatedTask = { ...previousTask };
+
         if (parentTaskId) {
-          const targetChildTask = previousTask.subTasks.filter(
-            (task) => task.id === taskId
-          )[0];
-          const updatedComments = targetChildTask.comments.map((comment) =>
-            comment.id === commentId
-              ? { ...comment, content } // 수정된 댓글로 교체
-              : comment
-          );
-          targetChildTask.comments = updatedComments;
-
-          queryClient.setQueryData(["task", parentTaskId], {
-            ...previousTask,
-            subTasks: [
-              ...previousTask.subTasks.filter((sub) => sub.id !== taskId),
-              targetChildTask,
-            ],
+          // 하위 작업인 경우
+          const updatedSubTasks = previousTask.subTasks.map((sub) => {
+            if (sub.id === taskId) {
+              const updatedComments = sub.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  return { ...comment, content };
+                }
+                return comment;
+              });
+              return { ...sub, comments: updatedComments };
+            }
+            return sub;
           });
+
+          updatedTask = { ...previousTask, subTasks: updatedSubTasks };
         } else {
-          const updatedComments = previousTask.comments.map((comment) =>
-            comment.id === commentId
-              ? { ...comment, content } // 수정된 댓글로 교체
-              : comment
-          );
-
-          queryClient.setQueryData(["task", taskId], {
-            ...previousTask,
-            comments: updatedComments,
+          // 일반 작업인 경우
+          const updatedComments = previousTask.comments.map((comment) => {
+            if (comment.id === commentId) {
+              return { ...comment, content };
+            }
+            return comment;
           });
-        }
-      }
 
-      return { previousTask };
+          updatedTask = { ...previousTask, comments: updatedComments };
+        }
+
+        queryClient.setQueryData(
+          ["task", parentTaskId ? parentTaskId : taskId],
+          updatedTask
+        );
+
+        return { previousTask };
+      }
     },
-    onSettled: (data) => {
+    onSuccess: (data) => {
       queryClient.setQueryData(
         ["task", parentTaskId ? parentTaskId : taskId],
         (oldTask: Task | undefined) => {
           if (!oldTask) return oldTask;
 
+          let updatedTask = { ...oldTask };
+
           if (parentTaskId) {
-            const targetChildTask = oldTask.subTasks.find(
-              (task) => task.id === taskId
-            );
-
-            if (!targetChildTask) return oldTask;
-
-            const updatedComments = targetChildTask.comments.map((comment) =>
-              comment.id === data?.updateComment.id
-                ? data.updateComment
-                : comment
-            );
-
-            const updatedSubTasks = oldTask.subTasks.map((sub) =>
-              sub.id === taskId ? { ...sub, comments: updatedComments } : sub
-            );
-
-            return { ...oldTask, subTasks: updatedSubTasks };
+            // 하위 작업인 경우
+            const updatedSubTasks = oldTask.subTasks.map((sub) => {
+              if (sub.id === taskId) {
+                const updatedComments = sub.comments.map((comment) => {
+                  if (comment.id === data.updateComment.id) {
+                    return { ...data.updateComment };
+                  }
+                  return comment;
+                });
+                return { ...sub, comments: updatedComments };
+              }
+              return sub;
+            });
+            updatedTask = { ...oldTask, subTasks: updatedSubTasks };
           } else {
-            const updatedComments = oldTask.comments.map((comment) =>
-              comment.id === data?.updateComment.id
-                ? data.updateComment
-                : comment
-            );
+            // 일반 작업인 경우
+            const updatedComments = oldTask.comments.map((comment) => {
+              if (comment.id === data.updateComment.id) {
+                return { ...data.updateComment };
+              }
+              return comment;
+            });
 
-            return { ...oldTask, comments: updatedComments };
+            updatedTask = { ...oldTask, comments: updatedComments };
           }
+          queryClient.setQueryData(
+            ["task", parentTaskId ? parentTaskId : taskId],
+            updatedTask
+          );
         }
       );
 
@@ -159,42 +167,42 @@ export const useCommentMutations = ({
       });
 
       // 낙관적 업데이트 적용
-      const previousTask =
-        queryClient.getQueryData<Task>([
-          "task",
-          parentTaskId ? parentTaskId : taskId,
-        ]) || undefined;
+      const previousTask = queryClient.getQueryData<Task>([
+        "task",
+        parentTaskId ? parentTaskId : taskId,
+      ]);
 
       if (previousTask) {
-        if (parentTaskId) {
-          const targetChildTask = previousTask.subTasks.filter(
-            (sub) => sub.id === taskId
-          )[0];
-          const updatedComments = targetChildTask.comments.filter(
-            (comment) => comment.id !== commentId
-          );
-          targetChildTask.comments = updatedComments;
+        let updatedTask = { ...previousTask };
 
-          queryClient.setQueryData(["task", parentTaskId], {
-            ...previousTask,
-            subTasks: [
-              ...previousTask.subTasks.filter((sub) => sub.id !== taskId),
-              targetChildTask,
-            ],
+        if (parentTaskId) {
+          // 하위 작업인 경우
+          const updatedSubTasks = previousTask.subTasks.map((sub) => {
+            if (sub.id === taskId) {
+              const updatedComments = sub.comments.filter(
+                (comment) => comment.id !== commentId
+              );
+              return { ...sub, comments: updatedComments };
+            }
+            return sub;
           });
+
+          updatedTask = { ...previousTask, subTasks: updatedSubTasks };
         } else {
+          // 일반 작업인 경우
           const updatedComments = previousTask.comments.filter(
             (comment) => comment.id !== commentId
           );
 
-          queryClient.setQueryData(["task", taskId], {
-            ...previousTask,
-            comments: updatedComments,
-          });
+          updatedTask = { ...previousTask, comments: updatedComments };
         }
-      }
+        queryClient.setQueryData(
+          ["task", parentTaskId ? parentTaskId : taskId],
+          updatedTask
+        );
 
-      return { previousTask };
+        return { previousTask };
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -228,58 +236,60 @@ export const useCommentMutations = ({
       });
 
       // 낙관적 업데이트 적용
-      const previousTask =
-        queryClient.getQueryData<Task>([
-          "task",
-          parentTaskId ? parentTaskId : taskId,
-        ]) || undefined;
+      const previousTask = queryClient.getQueryData<Task>([
+        "task",
+        parentTaskId ? parentTaskId : taskId,
+      ]);
 
       if (previousTask) {
+        let updatedTask = { ...previousTask };
+
         if (parentTaskId) {
-          const targetChildTask = previousTask.subTasks.filter(
-            (sub) => sub.id === taskId
-          )[0];
-          const updatedComments = targetChildTask.comments.map((comment) =>
-            comment.id === commentId
-              ? {
-                  ...comment,
-                  likeCount: isLike
-                    ? comment.likeCount + 1
-                    : comment.likeCount - 1,
-                  isClicked: !comment.isClicked,
+          // 하위 작업인 경우
+          const updatedSubTasks = previousTask.subTasks.map((sub) => {
+            if (sub.id === taskId) {
+              const updatedComments = sub.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  return {
+                    ...comment,
+                    likeCount: isLike
+                      ? comment.likeCount + 1
+                      : comment.likeCount - 1,
+                    isClicked: isLike,
+                  };
                 }
-              : comment
-          );
-          targetChildTask.comments = updatedComments;
-
-          queryClient.setQueryData(["task", parentTaskId], {
-            ...previousTask,
-            subTasks: [
-              ...previousTask.subTasks.filter((sub) => sub.id !== taskId),
-              targetChildTask,
-            ],
+                return comment;
+              });
+              return { ...sub, comments: updatedComments };
+            }
+            return sub;
           });
+          updatedTask = { ...previousTask, subTasks: updatedSubTasks };
         } else {
-          const updatedComments = previousTask.comments.map((comment) =>
-            comment.id === commentId
-              ? {
-                  ...comment,
-                  likeCount: isLike
-                    ? comment.likeCount + 1
-                    : comment.likeCount - 1,
-                  isClicked: !comment.isClicked,
-                }
-              : comment
-          );
-
-          queryClient.setQueryData(["task", taskId], {
-            ...previousTask,
-            comments: updatedComments,
+          // 일반 작업인 경우
+          const updatedComments = previousTask.comments.map((comment) => {
+            if (comment.id === commentId) {
+              return {
+                ...comment,
+                likeCount: isLike
+                  ? comment.likeCount + 1
+                  : comment.likeCount - 1,
+                isClicked: isLike,
+              };
+            }
+            return comment;
           });
-        }
-      }
 
-      return { previousTask };
+          updatedTask = { ...previousTask, comments: updatedComments };
+        }
+
+        queryClient.setQueryData(
+          ["task", parentTaskId ? parentTaskId : taskId],
+          updatedTask
+        );
+
+        return { previousTask };
+      }
     },
     onSuccess: (data) => {
       queryClient.setQueryData(
@@ -287,29 +297,42 @@ export const useCommentMutations = ({
         (oldTask: Task | undefined) => {
           if (!oldTask) return oldTask;
 
+          let updatedTask = { ...oldTask };
+
           if (parentTaskId) {
-            const updatedSubTasks = oldTask.subTasks.map((sub) =>
-              sub.id === taskId
-                ? {
-                    ...sub,
-                    comments: sub.comments.map((comment) =>
-                      comment.id === data?.id ? data : comment
-                    ),
+            // 하위 작업인 경우
+            const updatedSubTasks = oldTask.subTasks.map((sub) => {
+              if (sub.id === taskId) {
+                const updatedComments = sub.comments.map((comment) => {
+                  if (comment.id === data?.id) {
+                    return data; // 서버에서 받은 전체 댓글 객체로 교체
                   }
-                : sub
-            );
+                  return comment;
+                });
+                return { ...sub, comments: updatedComments };
+              }
+              return sub;
+            });
 
-            return { ...oldTask, subTasks: updatedSubTasks };
+            updatedTask = { ...oldTask, subTasks: updatedSubTasks };
           } else {
-            const updatedComments = oldTask.comments.map((comment) =>
-              comment.id === data?.id ? data : comment
-            );
+            // 일반 작업인 경우
+            const updatedComments = oldTask.comments.map((comment) => {
+              if (comment.id === data?.id) {
+                return data; // 서버에서 받은 전체 댓글 객체로 교체
+              }
+              return comment;
+            });
 
-            return { ...oldTask, comments: updatedComments };
+            updatedTask = { ...oldTask, comments: updatedComments };
           }
+
+          queryClient.setQueryData(
+            ["task", parentTaskId ? parentTaskId : taskId],
+            updatedTask
+          );
         }
       );
-
       onSuccess?.();
     },
     onError: (error, _, context) => {
