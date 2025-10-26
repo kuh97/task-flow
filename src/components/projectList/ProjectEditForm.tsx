@@ -11,20 +11,26 @@ export interface ErrorMessage {
   [key: keyof FormData]: string;
 }
 
-interface CreateProjectFormProps {
+interface ProjectEditFormProps {
+  initialFormData: FormData;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
   errorMessages: ErrorMessage;
   setErrorMsg: React.Dispatch<React.SetStateAction<ErrorMessage>>;
 }
 
-const CreateProjectForm = ({
+const ProjectEditForm = ({
+  initialFormData,
   setFormData,
   errorMessages,
   setErrorMsg,
-}: CreateProjectFormProps) => {
-  const [name, setName] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [endDate, setEndDate] = useState<Date | null>(null);
+}: ProjectEditFormProps) => {
+  const [name, setName] = useState<string>(initialFormData.name);
+  const [description, setDescription] = useState<string>(
+    initialFormData.description
+  );
+  const [endDate, setEndDate] = useState<Date | null>(
+    initialFormData.endDate ? new Date(initialFormData.endDate) : null
+  );
 
   const handleChangeName = (value: string) => {
     setErrorMsg((prev) => ({
@@ -94,4 +100,4 @@ const CreateProjectForm = ({
   );
 };
 
-export default CreateProjectForm;
+export default ProjectEditForm;

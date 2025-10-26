@@ -2,9 +2,11 @@ import client from "./graphqlClient";
 import {
   CREATE_MEMBER_FROM_PROJECT,
   CREATE_PROJECT,
+  DELETE_PROJECT,
   GET_PROJECT_BY_ID,
   GET_PROJECTS,
   REMOVE_MEMBER_FROM_PROJECT,
+  UPDATE_PROJECT,
 } from "@queries/projectQueries";
 import Project, { ProjectBasic } from "@models/Project";
 import { convertProjectDates } from "@/utils/convertDateFormat";
@@ -69,6 +71,47 @@ export const createProject = async (
   };
 
   return client.request(CREATE_PROJECT, variables);
+};
+
+interface UpdateProjectResponse {
+  updateProject: ProjectBasic;
+}
+
+/**
+ * 프로젝트 수정 API
+ * @param newProject - 수정할 프로젝트 데이터
+ * @returns 수정된 프로젝트 정보
+ */
+export const updateProject = async (
+  newProject: ProjectBasic
+): Promise<UpdateProjectResponse> => {
+  const variables = {
+    id: newProject.id,
+    name: newProject.name,
+    description: newProject.description,
+  };
+
+  return client.request<UpdateProjectResponse>(UPDATE_PROJECT, variables);
+};
+
+interface DeleteProjectResponse {
+  deleteProject: ProjectBasic;
+}
+
+/**
+ * 프로젝트 삭제 api
+ * @param name
+ * @param description
+ * @returns ProjectBasic
+ */
+export const deleteProject = async (
+  deleteProject: ProjectBasic
+): Promise<DeleteProjectResponse> => {
+  const variables = {
+    id: deleteProject.id,
+  };
+
+  return client.request(DELETE_PROJECT, variables);
 };
 
 /**

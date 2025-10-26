@@ -4,6 +4,8 @@ import {
   removeMemberFromProject,
   createMemberFromProject,
   createProject,
+  deleteProject,
+  updateProject,
 } from "@api/projectApi";
 import Project, { ProjectBasic } from "@models/Project";
 import Member from "@models/Member";
@@ -30,12 +32,43 @@ export const useProjectMutations = ({
   >({
     mutationFn: createProject,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
       navigate(`/project/${data.createProject.id}/kanban`);
       onSuccess?.();
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
     onError: (error) => {
       console.error("프로젝트 생성 실패:", error);
+    },
+  });
+
+  const updateProjectMutation = useMutation<
+    { updateProject: ProjectBasic },
+    Error,
+    ProjectBasic
+  >({
+    mutationFn: updateProject,
+    onSuccess: (data) => {
+      onSuccess?.();
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+    },
+    onError: (error) => {
+      console.error("프로젝트 수정 실패:", error);
+    },
+  });
+
+  const deleteProjectMutation = useMutation<
+    { deleteProject: ProjectBasic },
+    Error,
+    ProjectBasic
+  >({
+    mutationFn: deleteProject,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      onSuccess?.();
+    },
+    onError: (error) => {
+      console.error("프로젝트 삭제 실패:", error);
     },
   });
 
@@ -94,6 +127,8 @@ export const useProjectMutations = ({
 
   return {
     createProject: createProjectMutation.mutate,
+    updateProject: updateProjectMutation.mutate,
+    deleteProject: deleteProjectMutation.mutate,
     removeMember: removeMemberMutation.mutate,
     createMember: createMemberMutation.mutate,
   };

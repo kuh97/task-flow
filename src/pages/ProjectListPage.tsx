@@ -1,30 +1,33 @@
 import Header from "@components/Header";
 import ProjectList from "@components/projectList/ProjectList";
-import Modal from "@/components/common/Modal";
-import CreateProjectForm, {
+import {
   ErrorMessage,
   FormData,
-} from "@/components/projectList/CreateProjectForm";
+} from "@/components/projectList/ProjectEditForm";
 import { useState } from "react";
 import { ProjectBasic } from "@models/Project";
 import { format } from "date-fns";
 import StatusBar from "@/components/StatusBar";
 import { useProjectMutations } from "@/hooks/project/useProjectMutation";
+import { useAppStore } from "@store/useAppStore";
+import { ProjectEditModalProps } from "@/types/modalTypes";
+import { convertToDateString } from "@/utils/convertDateFormat";
 
 const ProjectListPage = () => {
-  const [formData, setFormData] = useState<FormData>({});
   const [errorMsg, setErrorMsg] = useState<ErrorMessage>({});
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const { createProject } = useProjectMutations();
+  const { showModal, closeModal } = useAppStore();
 
   const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setFormData({});
+    closeModal();
     setErrorMsg({});
   };
 
-  const validationCheck = () => {
-    const { name, description } = formData;
+  const { createProject, updateProject } = useProjectMutations({
+    onSuccess: handleCloseModal, // 성공 시 modal 닫기
+  });
+
+  const validationCheck = (data: FormData) => {
+    const { name, description } = data;
     let hasError = false;
     if (!name || name.trim() === "") {
       setErrorMsg((prev) => ({
@@ -46,21 +49,63 @@ const ProjectListPage = () => {
     return true;
   };
 
-  const handleCreateProject = () => {
-    if (validationCheck()) {
+  const handleCreateProject = (data: FormData) => {
+    if (validationCheck(data)) {
+      const { name, description, endDate } = data;
       const newProject: ProjectBasic = {
         id: "",
-        name: formData.name,
-        description: formData.description,
+        name,
+        description,
         createdAt: format(new Date(), "yyyy-MM-dd"),
         progress: 0,
-        endDate: formData.endDate
-          ? new Date(formData.endDate).getTime().toString()
-          : "",
+        endDate: endDate ? new Date(endDate).getTime().toString() : "",
       };
 
       createProject(newProject);
     }
+  };
+
+  const handleShowCreateProjectModal = () => {
+    const initialFormData: FormData = {
+      name: "",
+      description: "",
+      endDate: "",
+    };
+    showModal("createProject", {
+      handleCloseModal,
+      handleSubmit: handleCreateProject,
+      initialFormData,
+      errorMsg,
+      setErrorMsg,
+    } as ProjectEditModalProps);
+  };
+
+  const handleUpdateProject = (data: FormData, project: ProjectBasic) => {
+    if (validationCheck(data)) {
+      const updatedProject: ProjectBasic = {
+        ...project,
+        ...data,
+      };
+
+      updateProject(updatedProject);
+    }
+  };
+
+  const handleShowUpdateProjectModal = (project: ProjectBasic) => {
+    const initialData: FormData = {
+      name: project.name,
+      description: project.description,
+      endDate: project.endDate ? convertToDateString(project.endDate) : "",
+    };
+
+    showModal("updateProject", {
+      handleCloseModal,
+      handleSubmit: handleUpdateProject,
+      initialFormData: initialData,
+      errorMsg,
+      setErrorMsg,
+      project,
+    } as ProjectEditModalProps);
   };
 
   return (
@@ -70,23 +115,10 @@ const ProjectListPage = () => {
         <Header
           title={"프로젝트"}
           buttonLabel={"프로젝트 생성"}
-          onClick={() => setIsModalOpen(true)}
+          onClick={handleShowCreateProjectModal}
         />
         <hr className="mt-4 border-t-2" />
-        <ProjectList />
-        <Modal
-          title={"프로젝트 생성"}
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          buttonLabel={"생성"}
-          onClick={handleCreateProject}
-        >
-          <CreateProjectForm
-            setFormData={setFormData}
-            errorMessages={errorMsg}
-            setErrorMsg={setErrorMsg}
-          />
-        </Modal>
+        <ProjectList onEdit={handleShowUpdateProjectModal} />
       </div>
     </>
   );

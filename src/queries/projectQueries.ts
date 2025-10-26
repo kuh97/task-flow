@@ -125,26 +125,12 @@ export const CREATE_PROJECT = gql`
 `;
 
 export const UPDATE_PROJECT = gql`
-  mutation UpdateProject(
-    $id: ID!
-    $name: String
-    $description: String
-    $members: [ID]
-  ) {
-    updateProject(
-      id: $id
-      name: $name
-      description: $description
-      members: $members
-    ) {
+  mutation UpdateProject($id: ID!, $name: String, $description: String) {
+    updateProject(id: $id, name: $name, description: $description) {
       id
       name
       description
       updatedAt
-      members {
-        id
-        nickname
-      }
     }
   }
 `;

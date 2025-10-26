@@ -4,8 +4,8 @@ import { ko } from "date-fns/locale";
 export const convertToDateString = (
   timestamp: string | undefined,
   dateFormat: string = "yyyy-MM-dd"
-): string | undefined => {
-  if (!timestamp) return undefined;
+): string => {
+  if (!timestamp) return "";
   return format(fromUnixTime(parseInt(timestamp) / 1000), dateFormat);
 };
 
