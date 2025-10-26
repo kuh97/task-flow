@@ -242,6 +242,16 @@ export const REMOVE_MEMBER_FROM_TASK = gql`
         isActive
         profileImage
       }
+      subTasks {
+        id
+        managers {
+          id
+          email
+          nickname
+          isActive
+          profileImage
+        }
+      }
     }
   }
 `;

@@ -311,6 +311,10 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
 
   const handleRemoveMember = (memberId: string) => {
     if (selectedTask) {
+      // 하위 작업의 담당자가 삭제될 수 있다. dialog를 띄어야해용
+      if (!isSubTask) {
+      }
+
       removeMemberFromTask({
         taskId: selectedTask.id,
         memberId: memberId,

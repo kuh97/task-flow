@@ -313,39 +313,43 @@ export const useTaskMutations = ({
 
           const isSubTask = !!variables.parentTaskId;
 
-          const updatedTasks = oldData.getProjectById.tasks.map((task) => {
-            if (isSubTask) {
-              // 하위 작업일 경우: 부모 작업 탐색
-              if (task.id === variables.parentTaskId) {
-                return {
-                  ...task,
-                  subTasks: task.subTasks.map((subTask) =>
-                    subTask.id === variables.taskId
-                      ? {
-                          ...subTask,
-                          managers: data.removeMemberFromTask.managers,
-                        }
-                      : subTask
-                  ),
-                };
-              }
-            } else {
-              // 상위 작업일 경우: 직접 업데이트
-              if (task.id === variables.taskId) {
-                return {
-                  ...task,
-                  managers: data.removeMemberFromTask.managers,
-                };
-              }
-            }
-            return task;
-          });
-
           return {
             ...oldData,
             getProjectById: {
               ...oldData.getProjectById,
-              tasks: updatedTasks,
+              tasks: oldData.getProjectById.tasks.map((task) => {
+                if (isSubTask) {
+                  return task.id === variables.parentTaskId
+                    ? {
+                        ...task,
+                        subTasks: task.subTasks.map((subTask) =>
+                          subTask.id === variables.taskId
+                            ? {
+                                ...subTask,
+                                managers: data.removeMemberFromTask.managers,
+                              }
+                            : subTask
+                        ),
+                      }
+                    : task;
+                } else {
+                  return task.id === variables.taskId
+                    ? {
+                        ...task,
+                        managers: data.removeMemberFromTask.managers,
+                        subTasks: task.subTasks.map((subTask) => {
+                          const updated =
+                            data.removeMemberFromTask.subTasks?.find(
+                              (s) => s.id === subTask.id
+                            );
+                          return updated
+                            ? { ...subTask, managers: updated.managers }
+                            : subTask;
+                        }),
+                      }
+                    : task;
+                }
+              }),
             },
           };
         }
