@@ -9,7 +9,11 @@ import SkeletonProject from "@components/projectList/SkeletonProject";
 /**
  * 프로젝트 리스트 컴포넌트입니다.
  */
-const ProjectList = () => {
+const ProjectList = ({
+  onEdit,
+}: {
+  onEdit: (project: ProjectBasic) => void;
+}) => {
   const [groupedProjects, setGroupedProjects] = useState<
     Map<number, Map<number, ProjectBasic[]>>
   >(new Map());
@@ -58,7 +62,12 @@ const ProjectList = () => {
         <div key={year} className="w-full mb-5">
           <h2 className="text-xl font-semibold h-[40px] flex items-center">{`${year}년`}</h2>
           {Array.from(months.entries()).map(([month, projects]) => (
-            <MonthlyProjectBox key={month} month={month} projects={projects} />
+            <MonthlyProjectBox
+              key={month}
+              month={month}
+              projects={projects}
+              onEdit={onEdit}
+            />
           ))}
         </div>
       ))}

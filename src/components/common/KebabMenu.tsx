@@ -10,6 +10,9 @@ interface KebabMenuProps {
   className?: string;
 }
 
+/**
+ * 케밥 메뉴 컴포넌트입니다.
+ */
 const KebabMenu = ({ menuItems, onClose, className }: KebabMenuProps) => {
   return (
     <div

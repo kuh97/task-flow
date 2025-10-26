@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import queryClient from "./queryClient";
 import {
   BrowserRouter as Router,
@@ -13,9 +15,8 @@ import GanttChartPage from "@pages/GanttChartPage";
 import MembersPage from "@pages/MembersPage";
 import LoginPage from "@pages/LoginPage";
 import ProtectedRoute from "@components/ProtectedRoute";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import AppModalRoot from "@components/common/AppModalRoot";
 import { useAuthStore } from "@store/authStore";
-import { useEffect } from "react";
 import { getAuthToken, setAuthToken } from "./api/graphqlClient";
 
 const App = () => {
@@ -46,6 +47,7 @@ const App = () => {
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
+      <AppModalRoot />
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
