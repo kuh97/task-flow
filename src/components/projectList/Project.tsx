@@ -37,6 +37,7 @@ const Project = ({ project, onEdit }: ProjectProps) => {
       label: "수정",
       onClick: () => {
         onEdit(project);
+        setIsKebabMenuOpen(false);
       },
     },
     {
@@ -50,7 +51,9 @@ const Project = ({ project, onEdit }: ProjectProps) => {
     },
   ];
 
-  const handleClickThreeDots = () => {
+  const handleClickThreeDots = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
     setIsKebabMenuOpen(!isKebabMenuOpen);
   };
 
@@ -67,13 +70,8 @@ const Project = ({ project, onEdit }: ProjectProps) => {
       </div>
       <div className="relative ml-auto">
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            handleClickThreeDots();
-          }}
+          onClick={handleClickThreeDots}
           className="p-1 rounded cursor-pointer"
-          onBlurCapture={handleClickThreeDots}
         >
           <Icon
             name={"threeDots"}

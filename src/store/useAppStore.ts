@@ -4,11 +4,24 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import {
   ProjectEditModalProps,
   DeleteProjectModalProps,
+  CreateTaskModalProps,
+  DeleteModalProps,
 } from "@/types/modalTypes";
 
-type ModalType = "createProject" | "updateProject" | "deleteProject" | null;
+type ModalType =
+  | "createProject"
+  | "updateProject"
+  | "deleteProject"
+  | "createTask"
+  | "delete"
+  | null;
 
-type ModalProp = ProjectEditModalProps | DeleteProjectModalProps | null;
+type ModalProp =
+  | ProjectEditModalProps
+  | DeleteProjectModalProps
+  | CreateTaskModalProps
+  | DeleteModalProps
+  | null;
 
 interface AppStore {
   loginMember: Member | null;
@@ -44,6 +57,6 @@ export const useAppStore = create<AppStore>()(
       partialize: (state) => ({
         loginMember: state.loginMember,
       }),
-    }
-  )
+    },
+  ),
 );

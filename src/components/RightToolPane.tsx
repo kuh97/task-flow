@@ -9,12 +9,12 @@ import TextArea from "./common/TextArea";
 import TextField from "./common/TextField";
 import { useTaskData, useTaskMutations } from "@/hooks/task/useTaskMutation";
 import KebabMenu from "./common/KebabMenu";
-import Modal from "./common/Modal";
 import { useProjectStore } from "@/store/useProjectStore";
 import SearchableDropdown from "./common/SearchableDropdown";
 import Member from "@/models/Member";
 import { useProjectData } from "@/hooks/project/useProjectMutation";
 import TaskTabs from "./kanbanBoard/TaskTabs";
+import { useAppStore } from "@/store/useAppStore";
 
 interface SearchableItem {
   id: number | string;
@@ -46,6 +46,7 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
   } = useTaskMutations({ projectId });
   const { data: project, isLoading: isLoadingProject } =
     useProjectData(projectId);
+  const { showModal, closeModal } = useAppStore();
 
   const { data: task, isLoading: isLoadingTask } = useTaskData(selectedTaskId!);
 
@@ -76,19 +77,17 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
 
   const [isKebabMenuOpen, setIsKebabMenuOpen] = useState<boolean>(false);
 
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
-
   const [isAddingMember, setIsAddingMember] = useState<boolean>(false);
   const [searchMemberValue, setSearchMemberValue] = useState("");
 
   const availableMembers = isSubTask
     ? parentTask?.managers.filter(
         (member) =>
-          !selectedTask?.managers.some((selected) => selected.id === member.id)
+          !selectedTask?.managers.some((selected) => selected.id === member.id),
       ) || []
     : project.members.filter(
         (member) =>
-          !selectedTask?.managers.some((selected) => selected.id === member.id)
+          !selectedTask?.managers.some((selected) => selected.id === member.id),
       );
 
   const mapMemberToSearchableItem = (member: Member): SearchableItem => ({
@@ -118,7 +117,6 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
       setErrorMsg("");
       setIsDatePickerOpen(false);
       setIsKebabMenuOpen(false);
-      setIsDeleteModalOpen(false);
       setIsAddingMember(false);
     }
   }, [selectedTask]);
@@ -128,11 +126,6 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
     { label: "작업 중", value: "InProgress" },
     { label: "작업 완료", value: "Done" },
   ];
-
-  const handleClickHomeButton = () => {
-    setSelectedTaskId(null);
-    setSelectedSubTaskId(null);
-  };
 
   const handleTitleClick = () => {
     setIsTitleEditMode(true);
@@ -182,15 +175,22 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
         deleteTask({ taskId: selectedTask.id });
         setSelectedTaskId(null);
       }
-      setIsDeleteModalOpen(false);
       setIsKebabMenuOpen(false);
+      closeModal();
     }
   };
 
   const kebabMenuItems = [
     {
       label: "삭제",
-      onClick: () => setIsDeleteModalOpen(true),
+      onClick: () => {
+        showModal("delete", {
+          title: "작업 삭제",
+          description: `${selectedTask?.name} 작업을 정말 삭제하시겠습니까?${!isSubTask ? "\n하위 작업도 함께 삭제됩니다." : ""}`,
+          handleCloseModal: () => closeModal(),
+          handleDelete: confirmDelete,
+        });
+      },
     },
   ];
 
@@ -309,12 +309,8 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
     setIsAddingMember(true);
   };
 
-  const handleRemoveMember = (memberId: string) => {
+  const removeMember = (memberId: string) => {
     if (selectedTask) {
-      // 하위 작업의 담당자가 삭제될 수 있다. dialog를 띄어야해용
-      if (!isSubTask) {
-      }
-
       removeMemberFromTask({
         taskId: selectedTask.id,
         memberId: memberId,
@@ -322,6 +318,22 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
         ...(isSubTask && { parentTaskId: parentTask?.id }),
       });
     }
+
+    closeModal();
+  };
+
+  const handleRemoveMember = (member: Member) => {
+    let description = `${member.nickname} 담당자를 정말 삭제하시겠습니까?`;
+    if (!isSubTask) {
+      description += "\n하위 작업의 담당자 목록에서도 함께 제외됩니다.";
+    }
+
+    showModal("delete", {
+      title: "담당자 삭제",
+      description,
+      handleCloseModal: () => closeModal(),
+      handleDelete: () => removeMember(member.id),
+    });
   };
 
   const handleCloseMember = () => {
@@ -337,17 +349,6 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
         className={`fixed right-0 top-0 w-[400px] h-full bg-white shadow-lg z-48`}
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          className={`fixed right-[400px] p-2 py-5 bg-white rounded-l-md shadow-[-2px_0_4px_rgba(0,0,0,0.1)] group disabled:bg-[rgb(204,204,204)]`}
-          onClick={(e) => {
-            e.stopPropagation();
-            handleClickHomeButton();
-          }}
-          disabled={isDeleteModalOpen}
-        >
-          <Icon name="rightArrow" className={`w-5 h-5 text-gray-400`} />
-        </button>
-
         <div className="flex flex-col h-full">
           {isSubTask && parentTask && (
             <button
@@ -410,7 +411,7 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
                 <KebabMenu
                   menuItems={kebabMenuItems}
                   onClose={() => handleClickThreeDots}
-                  className="w-[60px]"
+                  className="w-[65px]"
                 />
               )}
             </div>
@@ -546,7 +547,7 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
                           </div>
                           {manager.nickname}
                           <button
-                            onClick={() => handleRemoveMember(manager.id)}
+                            onClick={() => handleRemoveMember(manager)}
                             className="text-gray-400 hover:text-red-500 transition-colors"
                           >
                             ×
@@ -566,16 +567,6 @@ const RightToolPane = ({ isSubTask = false }: RightToolPaneProps) => {
           </div>
         </div>
       </div>
-      <Modal
-        title="작업 삭제"
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        buttonLabel="삭제"
-        onClick={confirmDelete}
-        className="bg-opacity-20"
-      >
-        <p className="my-4">정말로 이 작업을 삭제하시겠습니까?</p>
-      </Modal>
     </>
   );
 };

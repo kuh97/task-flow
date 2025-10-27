@@ -1,10 +1,14 @@
 import { useAppStore } from "@store/useAppStore";
-import ProjectEditModal from "@components/projectList/ProjectEditModal";
+import ProjectEditModal from "@components/modal/ProjectEditModal";
 import {
   ProjectEditModalProps,
   DeleteProjectModalProps,
+  CreateTaskModalProps,
+  DeleteModalProps,
 } from "@/types/modalTypes";
-import DeleteProjectModal from "../projectList/DeleteProjectModal";
+import DeleteProjectModal from "../modal/DeleteProjectModal";
+import CreateTaskModal from "../modal/CreateTaskModal";
+import DeleteModal from "../modal/DeleteModal";
 
 const AppModalRoot = () => {
   const { openModal, modalType, modalProps } = useAppStore();
@@ -30,6 +34,10 @@ const AppModalRoot = () => {
       return (
         <DeleteProjectModal {...(modalProps as DeleteProjectModalProps)} />
       );
+    case "createTask":
+      return <CreateTaskModal {...(modalProps as CreateTaskModalProps)} />;
+    case "delete":
+      return <DeleteModal {...(modalProps as DeleteModalProps)} />;
     default:
       return null;
   }
