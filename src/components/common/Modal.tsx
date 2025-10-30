@@ -23,7 +23,7 @@ const Modal = ({
     <div
       className={`fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 ${className}`}
     >
-      <div className="flex flex-col bg-white p-6 rounded-lg min-w-fit">
+      <div className="flex flex-col bg-white p-6 rounded-lg min-w-fit gap-5">
         <div className="w-full flex justify-between">
           <h2 className="text-2xl font-bold">{title}</h2>
           <button onClick={onClose}>
@@ -32,7 +32,7 @@ const Modal = ({
         </div>
         {children}
         <button
-          className="mt-6 ml-auto bg-primary text-white hover:bg-primary-hover px-4 py-1 rounded"
+          className="ml-auto bg-primary text-white hover:bg-primary-hover px-4 py-1 rounded"
           onClick={onClick}
         >
           {buttonLabel}

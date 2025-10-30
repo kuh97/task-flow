@@ -1,6 +1,8 @@
 import { ProjectEditModalProps } from "@/types/modalTypes";
 import Modal from "../common/Modal";
-import ProjectEditForm, { FormData } from "./ProjectEditForm";
+import ProjectEditForm, {
+  FormData,
+} from "@/components/projectList/ProjectEditForm";
 import { useState } from "react";
 
 /**

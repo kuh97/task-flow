@@ -26,7 +26,7 @@ const KebabMenu = ({ menuItems, onClose, className }: KebabMenuProps) => {
                 item.onClick();
                 onClose();
               }}
-              className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center ${item.className || ""}`}
+              className={`w-full text-center px-4 py-2 text-sm hover:bg-gray-100 flex items-center justify-center ${item.className || ""}`}
             >
               {item.label}
             </button>

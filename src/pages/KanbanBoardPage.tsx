@@ -1,16 +1,16 @@
-import { useState } from "react";
 import { Status, statusNames } from "@models/Task";
 import Board from "@components/kanbanBoard/Board";
 import TaskCardDragProvider from "@/context/TaskCardDragContext";
 import Header from "@components/Header";
-import Modal from "@components/common/Modal";
-import TaskForm, { FormData } from "@/components/kanbanBoard/TaskForm";
+import { FormData } from "@/components/kanbanBoard/TaskForm";
 import { useProjectData } from "@/hooks/project/useProjectMutation";
 import { TaskInput, useTaskMutations } from "@/hooks/task/useTaskMutation";
 import { useTaskValidation } from "@/hooks/task/useTaskValidation";
 import { useProjectStore } from "@/store/useProjectStore";
+import { useAppStore } from "@/store/useAppStore";
 
 const KanbanBoardPage = () => {
+  const { showModal, closeModal } = useAppStore();
   const { projectId } = useProjectStore();
   const { data: project } = useProjectData(projectId);
   if (project == null) {
@@ -27,35 +27,43 @@ const KanbanBoardPage = () => {
     startDate: "",
     endDate: "",
   };
-  const [formData, setFormData] = useState<FormData>(initialFormData);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { errorMsg, resetErrors, validationCheck, clearFieldError } =
     useTaskValidation();
 
   const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setFormData(initialFormData);
     resetErrors();
   };
 
-  const handleCreateTask = () => {
-    if (validationCheck(formData)) {
+  const handleCreateTask = (data: FormData) => {
+    if (validationCheck(data)) {
       const newTask: TaskInput = {
         id: "",
         projectId: project.id,
-        name: formData.name,
-        description: formData.description ?? "",
-        status: formData.status,
-        managers: formData.managers.map((member) => member.id) ?? [],
-        startDate: formData.startDate ?? "",
-        endDate: formData.endDate ?? "",
+        name: data.name,
+        description: data.description ?? "",
+        status: data.status,
+        managers: data.managers.map((member) => member.id) ?? [],
+        startDate: data.startDate ?? "",
+        endDate: data.endDate ?? "",
         progress: 0,
         priority: false,
       };
 
       createTask(newTask);
       handleCloseModal();
+      closeModal();
     }
+  };
+
+  const handleShowCreateTaskModal = () => {
+    showModal("createTask", {
+      handleCloseModal: () => closeModal(),
+      handleSubmit: handleCreateTask,
+      initialFormData,
+      errorMsg,
+      clearFieldError,
+      members: project.members,
+    });
   };
 
   return (
@@ -63,7 +71,7 @@ const KanbanBoardPage = () => {
       <Header
         title="칸반 보드"
         buttonLabel="작업 추가"
-        onClick={() => setIsModalOpen(true)}
+        onClick={handleShowCreateTaskModal}
       />
       <TaskCardDragProvider>
         <div className="flex border-box space-x-4 mt-6 h-screen overflow-hidden">
@@ -72,21 +80,6 @@ const KanbanBoardPage = () => {
           ))}
         </div>
       </TaskCardDragProvider>
-      <Modal
-        title={"작업 추가"}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        buttonLabel={"생성"}
-        onClick={handleCreateTask}
-      >
-        <TaskForm
-          formData={formData}
-          setFormData={setFormData}
-          members={project.members}
-          errorMsg={errorMsg}
-          clearFieldError={clearFieldError}
-        />
-      </Modal>
     </div>
   );
 };
